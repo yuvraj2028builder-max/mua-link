@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { AlertTriangle } from 'lucide-react'
 import { useAuth } from '../auth/AuthProvider'
 import { useI18n } from '../i18n'
 import { usePageMeta } from '../lib/seo'
 import { fetchMyArtist } from '../lib/api'
+import { requireSupabase } from '../lib/supabase'
 import Logo from '../components/Logo'
 import { Button } from '@/components/ui/button'
 import { FullPageLoader } from '../components/RequireAuth'
@@ -12,15 +13,24 @@ import { FullPageLoader } from '../components/RequireAuth'
 export default function AuthCallback() {
   const { user, loading, configured } = useAuth()
   const { t } = useI18n()
-  usePageMeta({ title: t('Signing you in…') + ' · MUALink', noindex: true })
   const navigate = useNavigate()
   const [loadError, setLoadError] = useState('')
   const [timedOut, setTimedOut] = useState(false)
-  const error = !configured
-    ? t('Accounts are not connected in this build.')
-    : !loading && !user
-      ? t('We could not complete the Google sign-in. Please try again.')
-      : loadError
+  const exchangeStarted = useRef(false)
+  const params = new URLSearchParams(window.location.search)
+  const code = params.get('code') || ''
+  const oauthError = params.get('error_description') || params.get('error') || ''
+  const error = loadError || (oauthError
+    ? t('We could not complete the Google sign-in. Please try again.')
+    : !configured
+      ? t('Accounts are not connected in this build.')
+      : !loading && !user && !code
+        ? t('We could not complete the Google sign-in. Please try again.')
+        : '')
+  usePageMeta({
+    title: (error || timedOut ? t('Sign in') : t('Signing you in…')) + ' · MUALink',
+    noindex: true,
+  })
 
   useEffect(() => {
     const timer = window.setTimeout(() => setTimedOut(true), 12000)
@@ -28,8 +38,23 @@ export default function AuthCallback() {
   }, [])
 
   useEffect(() => {
-    if (!configured || loading || !user) return
+    if (!configured || loading || oauthError) return
 
+    if (!user && code) {
+      if (exchangeStarted.current) return
+      exchangeStarted.current = true
+      requireSupabase().auth.exchangeCodeForSession(code).then(({ error: exchangeError }) => {
+        if (exchangeError) {
+          console.error('Google sign-in exchange failed:', exchangeError.message)
+          setLoadError(t('We could not complete the Google sign-in. Please try again.'))
+          return
+        }
+        window.history.replaceState({}, '', '/auth/callback')
+      })
+      return
+    }
+
+    if (!user) return
     let active = true
     ;(async () => {
       try {
@@ -47,7 +72,7 @@ export default function AuthCallback() {
     })()
 
     return () => { active = false }
-  }, [configured, loading, navigate, t, user])
+  }, [code, configured, loading, navigate, oauthError, t, user])
 
   if (!error && !timedOut) {
     return <FullPageLoader label={t('Signing you in…')} />

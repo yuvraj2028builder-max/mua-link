@@ -10,7 +10,7 @@ export const supabase: SupabaseClient | null = hasBackend
       auth: {
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: true,
+        detectSessionInUrl: false,
         flowType: 'pkce',
       },
     })

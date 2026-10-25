@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { Link, Route, Routes, useLocation } from 'react-router'
+import { Link, Route, Routes, useLocation, useNavigate } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import './App.css'
 import { AuthProvider } from './auth/AuthProvider'
@@ -28,6 +28,21 @@ function ScrollToTop() {
   return null
 }
 
+function AuthRedirect() {
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (location.pathname === '/auth/callback') return
+    const params = new URLSearchParams(location.search)
+    const isAuthResult = params.has('code') || params.has('error') || params.has('error_description')
+    if (!isAuthResult) return
+    navigate(`/auth/callback${location.search}${location.hash}`, { replace: true })
+  }, [location.hash, location.pathname, location.search, navigate])
+
+  return null
+}
+
 function NotFound() {
   const { t } = useI18n()
   usePageMeta({ title: t('Page not found') + ' · MUALink', noindex: true })
@@ -52,6 +67,7 @@ export default function App() {
       <LanguageProvider>
         <StoreProvider>
           <ScrollToTop />
+          <AuthRedirect />
           <Suspense fallback={<FullPageLoader />}>
             <Routes>
               <Route path="/" element={<Landing />} />
