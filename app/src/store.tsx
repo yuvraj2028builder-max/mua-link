@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { toast } from 'sonner'
 import type { EnquiryDraft, Lead, LeadStatus, MuaProfile } from './types'
 import { demoProfile, initialLeads } from './data'
@@ -12,7 +12,7 @@ import {
   setDateAvailability,
   setEnquiryStatus,
 } from './lib/api'
-import { hasBackend } from './lib/supabase'
+import { hasBackend, supabase } from './lib/supabase'
 import { useAuth } from './auth/AuthProvider'
 import { useI18n } from './i18n'
 
@@ -117,6 +117,7 @@ function RemoteStoreProvider({ children }: { children: ReactNode }) {
   const [dataLoading, setDataLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
+  const loadedUserId = useRef<string | null>(null)
 
   useEffect(() => {
     const userId = user?.id
@@ -125,11 +126,13 @@ function RemoteStoreProvider({ children }: { children: ReactNode }) {
       setLeads([])
       setUnavailableDates([])
       setError(null)
+      setDataLoading(false)
+      loadedUserId.current = null
       return
     }
 
     let active = true
-    setDataLoading(true)
+    if (loadedUserId.current !== userId) setDataLoading(true)
     setError(null)
 
     ;(async () => {
@@ -152,12 +155,46 @@ function RemoteStoreProvider({ children }: { children: ReactNode }) {
       } catch (loadError) {
         if (active) setError(loadError instanceof Error ? loadError.message : 'Could not load your studio.')
       } finally {
-        if (active) setDataLoading(false)
+        if (active) {
+          setDataLoading(false)
+          loadedUserId.current = userId
+        }
       }
     })()
 
     return () => { active = false }
-  }, [user?.id, reloadToken])
+  }, [reloadToken, user?.id])
+
+  useEffect(() => {
+    const userId = user?.id
+    if (!userId || !profile?.id) return
+
+    const refetch = () => setReloadToken((token) => token + 1)
+    const channel = supabase?.channel(`artist-enquiries-${profile.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'enquiries',
+          filter: `artist_id=eq.${profile.id}`,
+        },
+        refetch,
+      )
+      .subscribe()
+
+    const poll = window.setInterval(refetch, 30_000)
+    const onFocus = () => {
+      if (document.visibilityState === 'visible') refetch()
+    }
+    window.addEventListener('focus', onFocus)
+
+    return () => {
+      window.clearInterval(poll)
+      window.removeEventListener('focus', onFocus)
+      if (channel) void supabase?.removeChannel(channel)
+    }
+  }, [profile?.id, user?.id])
 
   const refresh = useCallback(async () => {
     setReloadToken((token) => token + 1)

@@ -7,6 +7,7 @@ export function newProfile(id: string, fullName = '', email = '', username = '')
   return {
     id,
     published: false,
+    paused: false,
     fullName,
     username: username || slugify(fullName),
     city: '',

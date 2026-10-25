@@ -43,6 +43,7 @@ import {
   formatEventDate,
   formatEventDateLong,
   formatTime,
+  formatVenue,
   initials,
   leadReminderMessage,
   profileUrl,
@@ -225,10 +226,16 @@ export default function Dashboard() {
           </Button>
         </div>
 
+        {profile.paused && (
+          <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-semibold text-amber-800">
+            {t('Your profile is paused. Brides can’t view your services or send requests until you make it live again.')}
+          </div>
+        )}
+
         <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
           {[
             { label: t('New'), value: newCount, dot: true },
-            { label: t('In conversation'), value: repliedCount },
+            { label: t('Replied'), value: repliedCount },
             { label: t('Confirmed'), value: confirmedCount },
             { label: t('Archived'), value: archivedCount },
           ].map((stat) => (
@@ -256,7 +263,7 @@ export default function Dashboard() {
                     {newestUnread.brideName} · {formatEventDate(newestUnread.eventDate)}
                   </p>
                   <p className="mt-0.5 text-[11px] text-white/55">
-                    {t(newestUnread.occasion)} · {newestUnread.venue || t('Venue not shared')}
+                    {t(newestUnread.occasion)} · {formatVenue(profile.city, newestUnread.venue) || t('Venue not shared')}
                   </p>
                 </div>
               </div>
@@ -275,7 +282,7 @@ export default function Dashboard() {
                   className="h-9 rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
                 >
                   <a
-                    href={waLink(profile.whatsapp, leadReminderMessage(newestUnread))}
+                    href={waLink(profile.whatsapp, leadReminderMessage(newestUnread, profile.username, profile.city))}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -354,7 +361,7 @@ export default function Dashboard() {
 
                   <div className="mt-3 flex items-center gap-1 text-[11px] text-muted-foreground">
                     <MapPin className="size-3 shrink-0" />
-                    <span className="truncate">{lead.venue || t('Venue not shared')}</span>
+                    <span className="truncate">{formatVenue(profile.city, lead.venue) || t('Venue not shared')}</span>
                   </div>
 
                   <div className="mt-2.5 flex flex-wrap gap-1">
@@ -419,7 +426,7 @@ export default function Dashboard() {
 
               <div className="mt-3 flex items-center gap-2 rounded-xl border border-border bg-secondary/50 p-1.5 pl-3">
                 <Link2 className="size-3.5 shrink-0 text-muted-foreground" />
-                <p className="truncate text-[11px] font-semibold">mualink.in/{profile.username}</p>
+                <p className="truncate text-[11px] font-semibold">{profileUrl(profile.username)}</p>
               </div>
 
               <div className="mt-2 grid grid-cols-2 gap-2">
@@ -538,6 +545,22 @@ function LeadDetail({
     toast.success(blocked ? t('Date is open for requests again') : t('Date marked unavailable'))
   }
 
+  const replyOnWhatsApp = async () => {
+    if (!lead) return
+    window.open(waLink(lead.brideWhatsapp, message), '_blank', 'noopener')
+    if (lead.status === 'new') {
+      await onStatus(lead.id, 'replied')
+      toast.success(t('WhatsApp opened — request marked Replied'), {
+        action: {
+          label: t('Undo'),
+          onClick: () => { void onStatus(lead.id, 'new') },
+        },
+      })
+      return
+    }
+    toast.success(t('Opening WhatsApp…'))
+  }
+
   return (
     <Dialog open={Boolean(lead)} onOpenChange={(open) => !open && onClose()}>
       {lead && (
@@ -575,9 +598,11 @@ function LeadDetail({
                 { icon: Sparkles, label: t('Occasion'), value: t(lead.occasion) },
                 { icon: CalendarDays, label: t('Event date'), value: formatEventDateLong(lead.eventDate) },
                 { icon: Clock3, label: t('Ready by'), value: lead.readyBy ? formatTime(lead.readyBy) : t('Not specified') },
-                { icon: MapPin, label: t('Venue'), value: lead.venue || t('Not shared') },
-                { icon: Users, label: t('Family makeup'), value: lead.familyCount ? t('{count} people', { count: lead.familyCount }) : t('Just the bride') },
+                { icon: MapPin, label: t('Venue'), value: formatVenue(profile?.city || '', lead.venue) || t('Not shared') },
                 { icon: IndianRupee, label: t('Budget'), value: t(lead.budget || 'Not shared') },
+                ...(lead.services.some((service) => service.toLowerCase().includes('family')) && lead.familyCount > 0
+                  ? [{ icon: Users, label: t('Family makeup'), value: t('{count} people', { count: lead.familyCount }) }]
+                  : []),
               ].map((fact) => (
                 <div key={fact.label} className="rounded-xl border border-border/60 bg-card px-3 py-2.5">
                   <p className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
@@ -628,7 +653,7 @@ function LeadDetail({
                 </span>
               </div>
 
-              <p className="mt-2.5 text-[12px] leading-relaxed text-foreground/80">{leadSummary(lead, lang)}</p>
+              <p className="mt-2.5 text-[12px] leading-relaxed text-foreground/80">{leadSummary(lead, lang, profile?.city || '')}</p>
               <div className="mt-3 rounded-xl bg-card/70 px-3 py-2.5">
                 <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{t('Why this label')}</p>
                 <p className="mt-1 text-[11px] leading-relaxed text-foreground/75">{leadFitReason(lead, lang)}</p>
@@ -675,10 +700,7 @@ function LeadDetail({
           <div className="sticky bottom-0 flex flex-wrap gap-2 border-t border-border/60 bg-background/95 p-4 backdrop-blur">
             <Button
               className="h-10 flex-1 rounded-full text-[12px]"
-              onClick={() => {
-                window.open(waLink(lead.brideWhatsapp, message), '_blank', 'noopener')
-                toast.success(t('Opening WhatsApp…'))
-              }}
+              onClick={() => void replyOnWhatsApp()}
             >
               <MessageCircle className="size-4" /> {t('Reply on WhatsApp')}
             </Button>
@@ -686,8 +708,13 @@ function LeadDetail({
               <Copy className="size-3.5" /> {t('Copy opener')}
             </Button>
             <Button variant="ghost" className="h-10 rounded-full text-[12px]" onClick={toggleBlocked}>
-              <CalendarX2 className="size-3.5" /> {blocked ? t('Unblock date') : t('Mark unavailable')}
+              <CalendarX2 className="size-3.5" /> {blocked ? t('Unblock date') : t('Block this date')}
             </Button>
+            {!blocked && (
+              <p className="w-full text-[10px] text-muted-foreground">
+                {t('This blocks the date in Availability; the request itself stays unchanged.')}
+              </p>
+            )}
             <Button
               variant="ghost"
               className="h-10 rounded-full text-[12px]"

@@ -61,7 +61,7 @@ export function usePublicArtist(username: string | undefined): PublicArtistState
     }
   }
 
-  if (!username) return EMPTY
+  if (!username) return { ...EMPTY, loading: true }
   if (!remote || remote.username !== username) return { ...EMPTY, loading: true }
   return remote.state
 }

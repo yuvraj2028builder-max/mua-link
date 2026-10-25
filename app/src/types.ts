@@ -20,6 +20,7 @@ export interface PortfolioItem {
 export interface MuaProfile {
   id: string
   published: boolean
+  paused: boolean
   isDemo?: boolean
   fullName: string
   username: string

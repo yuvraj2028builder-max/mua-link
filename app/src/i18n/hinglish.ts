@@ -159,10 +159,6 @@ export const hinglish: Record<string, string> = {
   'Cities, hours & travel': 'Sheher, samay aur travel',
   'Sticky booking button': 'Hamesha dikhne wala booking button',
   'Visit Priyanka’s profile': 'Priyanka ki profile dekhein',
-  'Bridal artist · Lajpat Nagar': 'Bridal artist · Lajpat Nagar',
-  '“I used to lose brides because I replied at midnight. Now my link collects everything, and the opener sounds like me — even on a day when I’ve done three faces and a trial.”':
-    '“Pehle main raat ko jawab dene ki wajah se brides kho deti thi. Ab mera link sab kuch collect karta hai, aur message meri hi tarah lagta hai — us din bhi jab maine teen faces aur ek trial kiya ho.”',
-  'Early access artist, Delhi': 'Early access artist, Delhi',
   'Pricing, honestly': 'Pricing, saaf saaf',
   '₹0. For now, and for a long while.': '₹0. Abhi ke liye, aur kaafi time tak.',
   'V1 is completely free: profile, form, request cards, WhatsApp replies and lead management. No commission, no card, no trial timer. If we ever add a premium plan, the core stays free.':
@@ -417,7 +413,6 @@ export const hinglish: Record<string, string> = {
   'You’re all caught up. Your profile is doing the first round of questions for you.':
     'Sab clear hai. Aapki profile pehle round ke sawaal khud kar rahi hai.',
   'Edit your profile': 'Apni profile edit karein',
-  'In conversation': 'Baat chal rahi',
   'Venue not shared': 'Venue share nahi kiya',
   'Open request': 'Request kholein',
   'Send yourself a reminder': 'Apne aap ko reminder bhejein',
@@ -460,7 +455,6 @@ export const hinglish: Record<string, string> = {
   'Not specified': 'Nahi bataya',
   'Family makeup': 'Family makeup',
   '{count} people': '{count} log',
-  'Just the bride': 'Sirf bride',
   'Services requested': 'Mangi gayi services',
   'Her note': 'Unka note',
   'Inspiration photo': 'Inspiration photo',
@@ -473,7 +467,23 @@ export const hinglish: Record<string, string> = {
   'Opening WhatsApp…': 'WhatsApp khul raha hai…',
   'Copy opener': 'Message copy karein',
   'Unblock date': 'Date unblock karein',
-  'Mark unavailable': 'Unavailable mark karein',
+  'Block this date': 'Yeh date block karein',
+  'This blocks the date in Availability; the request itself stays unchanged.':
+    'Isse Availability mein date block hogi; request waise hi rahegi.',
+  'WhatsApp opened — request marked Replied': 'WhatsApp khula — request par Jawab diya mark hua',
+  'Undo': 'Undo',
+  'Choose 1–10 people': '1–10 log chunein',
+  'Profile visibility': 'Profile visibility',
+  'Paused': 'Paused',
+  'Your profile is paused': 'Aapki profile pause hai',
+  'Could not update profile visibility': 'Profile visibility update nahi ho paayi',
+  '{name} has paused bookings for now.': '{name} ne abhi bookings pause ki hain.',
+  'Your profile is paused. Brides can’t view your services or send requests until you make it live again.':
+    'Aapki profile pause hai. Live karne tak brides services nahi dekh sakti ya request nahi bhej sakti.',
+  'Your profile is live — changes appear as soon as you save.':
+    'Aapki profile live hai — save karte hi changes dikhne lagenge.',
+  'Your profile is paused — saved changes will appear when you make it live.':
+    'Aapki profile pause hai — saved changes live karne par dikhengi.',
   'Request archived': 'Request archive ho gayi',
   'Mark replied': 'Jawab diya mark karein',
   'Review pending': 'Review baaki',

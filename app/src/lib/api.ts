@@ -19,12 +19,12 @@ function message(error: { message?: string } | null | undefined, fallback: strin
 
 interface ArtistRow {
   id: string
-  owner_id: string | null
+  owner_id?: string | null
   username: string
   full_name: string
   city: string
-  whatsapp: string
-  email: string | null
+  whatsapp?: string
+  email?: string | null
   bio: string
   profile_photo: string
   services: MuaProfile['services']
@@ -36,6 +36,7 @@ interface ArtistRow {
   working_to: string
   languages: string[]
   published: boolean
+  paused: boolean
   is_demo: boolean
 }
 
@@ -65,11 +66,12 @@ export function rowToProfile(row: ArtistRow): MuaProfile {
   return {
     id: row.id,
     published: row.published,
+    paused: row.paused,
     isDemo: row.is_demo,
     fullName: row.full_name,
     username: row.username,
     city: row.city,
-    whatsapp: row.whatsapp,
+    whatsapp: row.whatsapp || '',
     email: row.email || '',
     bio: row.bio,
     profilePhoto: row.profile_photo,
@@ -104,6 +106,7 @@ function profileToRow(profile: MuaProfile, userId: string) {
     working_to: profile.workingTo,
     languages: profile.languages,
     published: profile.published,
+    paused: profile.paused,
   }
 }
 
@@ -135,7 +138,7 @@ export async function fetchPublicArtist(username: string) {
   const db = requireSupabase()
   const { data, error } = await db
     .from('public_artists')
-    .select('*')
+    .select('id,username,full_name,city,bio,profile_photo,services,portfolio,service_cities,travel_available,working_days,working_from,working_to,languages,published,paused,is_demo')
     .eq('username', username.toLowerCase())
     .maybeSingle<ArtistRow>()
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import {
   ArrowDown,
@@ -124,6 +124,38 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
   const [nameCheck, setNameCheck] = useState<'idle' | 'checking' | 'available' | 'taken'>(() =>
     form.username && hasBackend && !isNew ? 'available' : 'idle',
   )
+  const formRef = useRef(form)
+  const saveProfileRef = useRef(saveProfile)
+  const lastSavedRef = useRef(JSON.stringify(form))
+  const autosaveTimerRef = useRef<number | null>(null)
+
+  useEffect(() => { formRef.current = form }, [form])
+  useEffect(() => { saveProfileRef.current = saveProfile }, [saveProfile])
+
+  useEffect(() => {
+    const snapshot = JSON.stringify(form)
+    if (snapshot === lastSavedRef.current) return
+
+    const timer = window.setTimeout(() => {
+      autosaveTimerRef.current = null
+      setSaving(true)
+      void saveProfileRef.current(form)
+        .then((saved) => {
+          lastSavedRef.current = JSON.stringify(saved)
+          if (JSON.stringify(formRef.current) === snapshot) setForm(cloneProfile(saved))
+        })
+        .catch((saveError: unknown) => {
+          toast.error(saveError instanceof Error ? saveError.message : t('Could not save your profile'))
+        })
+        .finally(() => setSaving(false))
+    }, 700)
+    autosaveTimerRef.current = timer
+
+    return () => {
+      window.clearTimeout(timer)
+      if (autosaveTimerRef.current === timer) autosaveTimerRef.current = null
+    }
+  }, [form, t])
 
   const steps = [
     { n: 1, label: t('Basics') },
@@ -283,17 +315,40 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
   const goNext = async () => {
     if (!validate(step)) return
     if (step === 1 && !(await confirmUsernameFree())) return
-    if (step < 6) goTo(step + 1)
+    if (step < 6) {
+      try {
+        await persist(form)
+        goTo(step + 1)
+      } catch (saveError) {
+        toast.error(saveError instanceof Error ? saveError.message : t('Could not save your profile'))
+      }
+    }
   }
 
   const persist = async (next: MuaProfile) => {
+    if (autosaveTimerRef.current !== null) {
+      window.clearTimeout(autosaveTimerRef.current)
+      autosaveTimerRef.current = null
+    }
+    if (JSON.stringify(next) === lastSavedRef.current) return next
     setSaving(true)
     try {
       const saved = await saveProfile(next)
-      setForm(cloneProfile(saved))
+      lastSavedRef.current = JSON.stringify(saved)
+      if (JSON.stringify(formRef.current) === JSON.stringify(next)) setForm(cloneProfile(saved))
       return saved
     } finally {
       setSaving(false)
+    }
+  }
+
+  const goBack = async () => {
+    if (step === 1) return
+    try {
+      await persist(form)
+      goTo(step - 1)
+    } catch (saveError) {
+      toast.error(saveError instanceof Error ? saveError.message : t('Could not save your profile'))
     }
   }
 
@@ -329,7 +384,7 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
       return
     }
     try {
-      await persist({ ...form, published: true })
+      await persist({ ...form, published: true, paused: false })
       setPublished(true)
       void refresh()
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -407,7 +462,7 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
 
             <div className="mt-6 flex items-center gap-2 rounded-xl border border-border bg-secondary/50 p-2 pl-3">
               <Link2 className="size-4 shrink-0 text-primary" />
-              <p className="min-w-0 flex-1 truncate text-left text-[12px] font-bold">mualink.in/{form.username}</p>
+              <p className="min-w-0 flex-1 truncate text-left text-[12px] font-bold">{profileUrl(form.username)}</p>
               <Button size="sm" className="h-8 rounded-full text-[10px]" onClick={() => copyLink(form.username)}>
                 <Copy className="size-3" /> {t('Copy')}
               </Button>
@@ -525,7 +580,7 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
                   <Label htmlFor="username" className="field-label">{t('Your link')}</Label>
                   <div className="mt-2 flex flex-wrap items-center gap-2 sm:flex-nowrap">
                     <div className="flex min-w-0 flex-1 items-center gap-1 rounded-xl border border-input bg-background px-3">
-                      <span className="shrink-0 text-[12px] font-bold text-muted-foreground">mualink.in/</span>
+                      <span className="max-w-[55vw] shrink-0 truncate text-[10px] font-bold text-muted-foreground">{`${window.location.origin}/p/`}</span>
                       <Input
                         id="username"
                         value={form.username}
@@ -854,7 +909,7 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
                   <h2 className="text-2xl">{t('Your profile, ready')}</h2>
                   <p className="mt-1 text-[13px] text-muted-foreground">{t('This is what brides will see when they open your link.')}</p>
                 </div>
-                <span className="rounded-full bg-accent px-3 py-1 text-[10px] font-bold text-primary">mualink.in/{form.username || t('yourname')}</span>
+                <span className="rounded-full bg-accent px-3 py-1 text-[10px] font-bold text-primary">{profileUrl(form.username || 'yourname')}</span>
               </div>
 
               <div className="mt-5 overflow-hidden rounded-2xl border border-border/70">
@@ -909,7 +964,7 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
             <Button
               type="button"
               variant="ghost"
-              onClick={() => goTo(Math.max(1, step - 1))}
+              onClick={() => void goBack()}
               disabled={step === 1 || saving}
               className="h-11 rounded-full px-4 text-[12px]"
             >
@@ -920,16 +975,18 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
               <Button type="button" onClick={goNext} className="h-11 min-w-[9.5rem] rounded-full px-6 text-[12px]" disabled={saving}>
                 {t('Continue')} <ArrowRight className="size-4" />
               </Button>
-            ) : (
-              <Button type="button" onClick={publish} className="h-11 min-w-[9.5rem] rounded-full px-6 text-[12px]" disabled={saving}>
-                {saving ? t('Publishing…') : <>{t('Publish')} <Check className="size-4" /></>}
-              </Button>
-            )}
+            ) : null}
           </div>
         </div>
 
         <p className="mt-5 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          {hasBackend ? t('Saved to your account · nothing is public until you publish') : t('Preview mode · this profile saves in your browser')}
+          {hasBackend
+            ? form.published && !form.paused
+              ? t('Your profile is live — changes appear as soon as you save.')
+              : form.published
+                ? t('Your profile is paused — saved changes will appear when you make it live.')
+                : t('Saved to your account · nothing is public until you publish')
+            : t('Preview mode · this profile saves in your browser')}
         </p>
       </main>
     </div>

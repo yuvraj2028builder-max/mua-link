@@ -3,6 +3,7 @@ import type { EnquiryDraft, Lead, MuaProfile } from './types'
 export const demoProfile: MuaProfile = {
   id: 'demo-priyanka',
   published: true,
+  paused: false,
   isDemo: true,
   fullName: 'Priyanka Sharma',
   username: 'priyanka',

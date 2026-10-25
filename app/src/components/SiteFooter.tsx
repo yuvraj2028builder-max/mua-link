@@ -31,7 +31,6 @@ export default function SiteFooter() {
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">{t('Support')}</p>
           <ul className="mt-4 space-y-3 text-sm text-foreground/80">
-            <li><a href="https://wa.me/919876543210" target="_blank" rel="noreferrer" className="link-underline">{t('WhatsApp us')}</a></li>
             <li><a href="mailto:hello@mualink.in" className="link-underline">hello@mualink.in</a></li>
             <li><Link to="/privacy" className="link-underline">{t('Privacy Policy')}</Link></li>
             <li><Link to="/terms" className="link-underline">{t('Terms of Use')}</Link></li>

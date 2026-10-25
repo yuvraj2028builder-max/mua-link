@@ -1,6 +1,6 @@
 import { format, parseISO } from 'date-fns'
 import type { EnquiryDraft, FitLabel, Lead, MuaProfile } from '../types'
-import { formatEventDateLong } from './site'
+import { formatEventDateLong, formatVenue } from './site'
 
 export interface LeadReview {
   aiSummary: string
@@ -16,19 +16,20 @@ function familyLine(count: number, hinglish: boolean) {
     : ` She also needs makeup for ${count} family member${count > 1 ? 's' : ''}.`
 }
 
-export function leadSummary(lead: Lead, lang: 'en' | 'hinglish') {
+export function leadSummary(lead: Lead, lang: 'en' | 'hinglish', city = '') {
   const hinglish = lang === 'hinglish'
-  if (!hinglish && lead.aiSummary) return lead.aiSummary
   const dateLabel = lead.eventDate ? formatEventDateLong(lead.eventDate) : hinglish ? 'date abhi tay nahi hui' : 'a date to be confirmed'
-  const family = familyLine(lead.familyCount, hinglish)
+  const venue = formatVenue(city, lead.venue)
+  const includesFamily = lead.services.some((service) => service.toLowerCase().includes('family'))
+  const family = includesFamily ? familyLine(lead.familyCount, hinglish) : ''
   const note = lead.notes
     ? hinglish
       ? ` Unka note: “${lead.notes}”`
       : ` Her note: “${lead.notes}”`
     : ''
   return hinglish
-    ? `${lead.brideName} ${dateLabel} ko ${lead.venue || 'venue'} mein ${lead.occasion} ke liye booking chahti hain. Unhone ${lead.services.join(', ')} maanga hai.${family}${note}`
-    : `${lead.brideName} is planning ${lead.occasion.toLowerCase()} on ${dateLabel} at ${lead.venue || 'a venue to be confirmed'}. She has requested ${lead.services.join(', ')}.${family}${note}`
+    ? `${lead.brideName} ${dateLabel} ko ${venue || 'venue'} mein ${lead.occasion} ke liye booking chahti hain. Unhone ${lead.services.join(', ')} maanga hai.${family}${note}`
+    : `${lead.brideName} is planning ${lead.occasion.toLowerCase()} on ${dateLabel} at ${venue || 'a venue to be confirmed'}. She has requested ${lead.services.join(', ')}.${family}${note}`
 }
 
 export function leadFitReason(lead: Lead, lang: 'en' | 'hinglish') {
@@ -91,11 +92,13 @@ export function buildLeadReview(
   else if (local && workingDay && !blocked) fitLabel = 'good_fit'
 
   const dateLabel = formatEventDateLong(draft.eventDate)
-  const familyNote = draft.familyCount
+  const venueLabel = formatVenue(profile.city, draft.venue)
+  const includesFamily = draft.services.some((service) => service.toLowerCase().includes('family'))
+  const familyNote = includesFamily && draft.familyCount
     ? ` She also needs makeup for ${draft.familyCount} family member${draft.familyCount > 1 ? 's' : ''}.`
     : ''
   const notesNote = draft.notes ? ` Her note: “${draft.notes}”` : ''
-  const summary = `${draft.brideName} is planning ${draft.occasion.toLowerCase()} on ${dateLabel} at ${draft.venue}. She has requested ${draft.services.join(', ')}.${familyNote}${notesNote}`
+  const summary = `${draft.brideName} is planning ${draft.occasion.toLowerCase()} on ${dateLabel} at ${venueLabel || 'a venue to be confirmed'}. She has requested ${draft.services.join(', ')}.${familyNote}${notesNote}`
 
   const fitReason = !servicesMatch
     ? 'One or more requested services are not listed on this profile.'

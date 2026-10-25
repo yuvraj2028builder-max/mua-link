@@ -25,10 +25,14 @@ create table if not exists public.artists (
   working_to text not null default '21:00',
   languages jsonb not null default '[]'::jsonb,
   published boolean not null default false,
+  paused boolean not null default false,
   is_demo boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.artists
+  add column if not exists paused boolean not null default false;
 
 create unique index if not exists artists_username_lower_idx on public.artists (lower(username));
 create unique index if not exists artists_owner_idx on public.artists (owner_id) where owner_id is not null;
@@ -43,7 +47,7 @@ create table if not exists public.enquiries (
   bride_whatsapp text not null check (bride_whatsapp ~ '^[6-9][0-9]{9}$'),
   occasion text not null,
   services jsonb not null default '[]'::jsonb,
-  family_count integer not null default 0 check (family_count between 0 and 20),
+  family_count integer not null default 0 check (family_count between 0 and 10),
   event_date date,
   ready_by text,
   venue text not null default '',
@@ -179,7 +183,10 @@ security definer
 set search_path = public
 as $$
 begin
-  if not exists (select 1 from public.artists where id = new.artist_id and published = true) then
+  if not exists (
+    select 1 from public.artists
+    where id = new.artist_id and published = true and paused = false
+  ) then
     raise exception 'This profile is not accepting requests.';
   end if;
 
@@ -250,7 +257,8 @@ grant execute on function public.username_taken(text) to anon, authenticated;
 -- The base table stays private so a bride (or any visitor) can never read an
 -- artist's WhatsApp number or email straight from the API.
 -- ---------------------------------------------------------------------------
-create or replace view public.public_artists
+drop view if exists public.public_artists;
+create view public.public_artists
 with (security_invoker = false) as
 select
   id,
@@ -268,10 +276,8 @@ select
   working_to,
   languages,
   published,
+  paused,
   is_demo,
-  ''::text as whatsapp,
-  null::text as email,
-  null::uuid as owner_id
 from public.artists
 where published = true;
 
@@ -280,6 +286,7 @@ grant select on public.public_artists to anon, authenticated;
 -- ---------------------------------------------------------------------------
 -- Grants (RLS still decides what each request can touch)
 -- ---------------------------------------------------------------------------
+revoke all on public.artists from anon, public;
 grant select on public.artists to authenticated;
 grant insert, update, delete on public.artists to authenticated;
 grant insert on public.enquiries to anon, authenticated;

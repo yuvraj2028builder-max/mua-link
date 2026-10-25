@@ -9,7 +9,6 @@ import {
   MessageCircle,
   ShieldCheck,
   Sparkles,
-  Star,
   Wand2,
 } from 'lucide-react'
 import SiteHeader from '../components/SiteHeader'
@@ -19,6 +18,7 @@ import { Badge } from '@/components/ui/badge'
 import { useAuth } from '../auth/AuthProvider'
 import { useI18n } from '../i18n'
 import { usePageMeta } from '../lib/seo'
+import { profileUrl } from '../lib/site'
 
 const pains = [
   {
@@ -126,7 +126,7 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[440px] animate-fade-up lg:max-w-none" style={{ animationDelay: '120ms' }}>
+            <div className="pointer-events-none relative mx-auto w-full max-w-[440px] animate-fade-up lg:max-w-none" style={{ animationDelay: '120ms' }}>
               <div className="absolute -left-6 top-10 hidden size-24 rounded-full border border-primary/15 sm:block" />
               <div className="hero-photo relative overflow-hidden rounded-[2rem] border border-white/60 bg-card">
                 <img
@@ -305,7 +305,7 @@ export default function Landing() {
               </Button>
             </div>
 
-            <div className="grid-lines relative rounded-[1.8rem] border border-border/70 bg-[hsl(26_36%_96%)] p-4 sm:p-6">
+            <div className="grid-lines pointer-events-none relative rounded-[1.8rem] border border-border/70 bg-[hsl(26_36%_96%)] p-4 sm:p-6">
               <div className="soft-card p-5 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -344,11 +344,9 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="mt-4 flex gap-2">
-                  <Button size="sm" className="h-9 flex-1 rounded-full text-[11px]">
-                    <MessageCircle className="size-3.5" /> {t('Reply on WhatsApp')}
-                  </Button>
-                  <Button size="sm" variant="outline" className="h-9 rounded-full text-[11px]">{t('Archive')}</Button>
+                <div className="mt-4 flex justify-between border-t border-border/60 pt-3 text-[10px] font-semibold text-muted-foreground">
+                  <span>{t('Reply on WhatsApp')}</span>
+                  <span>{t('Archive')}</span>
                 </div>
               </div>
             </div>
@@ -364,7 +362,7 @@ export default function Landing() {
                   <span className="size-2 rounded-full bg-rose-300" />
                   <span className="size-2 rounded-full bg-amber-300" />
                   <span className="size-2 rounded-full bg-emerald-300" />
-                  <span className="ml-3 flex-1 rounded-full bg-card px-3 py-1 text-[10px] text-muted-foreground">mualink.in/priyanka</span>
+                  <span className="ml-3 flex-1 rounded-full bg-card px-3 py-1 text-[10px] text-muted-foreground">{profileUrl('priyanka')}</span>
                 </div>
                 <div className="relative h-32 sm:h-40">
                   <img src="/images/hero.jpg" alt={t('Bridal portfolio cover')} className="size-full object-cover object-center" />
@@ -422,28 +420,6 @@ export default function Landing() {
                   <ArrowUpRight className="size-4" />
                 </Link>
               </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* QUOTE */}
-        <section className="page-shell py-20 lg:py-24">
-          <div className="grid gap-8 rounded-[1.8rem] border border-border/70 bg-card p-6 sm:p-10 lg:grid-cols-[0.55fr_1.45fr] lg:items-center">
-            <div className="flex items-center gap-4 lg:flex-col lg:items-start">
-              <img src="/images/look1.jpg" alt="Priyanka Sharma" className="size-16 rounded-full object-cover lg:size-24" />
-              <div>
-                <p className="font-display text-lg">Priyanka Sharma</p>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{t('Bridal artist · Lajpat Nagar')}</p>
-                <div className="mt-1 flex gap-0.5 text-[hsl(var(--gold))]">
-                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="size-3 fill-current" />)}
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="font-display text-2xl leading-[1.35] sm:text-[1.9rem]">
-                {t('“I used to lose brides because I replied at midnight. Now my link collects everything, and the opener sounds like me — even on a day when I’ve done three faces and a trial.”')}
-              </p>
-              <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-primary/60">{t('Early access artist, Delhi')}</p>
             </div>
           </div>
         </section>

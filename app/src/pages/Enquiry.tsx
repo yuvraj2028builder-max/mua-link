@@ -42,7 +42,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Progress } from '@/components/ui/progress'
 import { emptyEnquiry } from '../data'
 import type { EnquiryDraft } from '../types'
-import { budgets, formatEventDateLong, formatTime, isValidIndianMobile, occasions } from '../lib/site'
+import { budgets, formatEventDateLong, formatTime, formatVenue, isValidIndianMobile, occasions } from '../lib/site'
 import { compressImage } from '../lib/image'
 
 const occasionIcons: Record<string, LucideIcon> = {
@@ -57,7 +57,14 @@ const occasionIcons: Record<string, LucideIcon> = {
 function loadDraft(username: string): EnquiryDraft {
   try {
     const saved = localStorage.getItem(`mualink-enquiry-${username}`)
-    if (saved) return { ...emptyEnquiry, ...JSON.parse(saved) as EnquiryDraft }
+    if (saved) {
+      const draft = { ...emptyEnquiry, ...JSON.parse(saved) as EnquiryDraft }
+      const hasFamilyService = draft.services.some((service) => service.toLowerCase().includes('family'))
+      return {
+        ...draft,
+        familyCount: hasFamilyService ? Math.min(10, Math.max(1, draft.familyCount)) : 0,
+      }
+    }
   } catch {
     // ignore a corrupted draft
   }
@@ -140,6 +147,19 @@ export default function Enquiry() {
     )
   }
 
+  if (artist.paused) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
+        <Logo />
+        <h1 className="mt-10 text-3xl">{artist.fullName}</h1>
+        <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+          {t('{name} has paused bookings for now.', { name: artist.fullName })}
+        </p>
+        <Button asChild className="mt-7 rounded-full"><Link to={`/p/${artist.username}`}>{t('Back to profile')}</Link></Button>
+      </div>
+    )
+  }
+
   const firstName = artist.fullName.split(' ')[0] || artist.fullName
   const update = (patch: Partial<EnquiryDraft>) => setDraft((current) => ({ ...current, ...patch }))
   const selectedDate = draft.eventDate ? parseISO(`${draft.eventDate}T12:00:00`) : undefined
@@ -152,7 +172,11 @@ export default function Enquiry() {
       const selected = current.services.includes(name)
       const services = selected ? current.services.filter((item) => item !== name) : [...current.services, name]
       const familySelected = services.some((service) => service.toLowerCase().includes('family'))
-      return { ...current, services, familyCount: familySelected ? Math.max(1, current.familyCount) : 0 }
+      return {
+        ...current,
+        services,
+        familyCount: familySelected ? Math.min(10, Math.max(1, current.familyCount)) : 0,
+      }
     })
     setErrors((current) => ({ ...current, services: '', familyCount: '' }))
   }
@@ -166,7 +190,7 @@ export default function Enquiry() {
     if (currentStep === 2 && !draft.occasion) next.occasion = t('Choose an occasion to continue')
     if (currentStep === 3) {
       if (!draft.services.length) next.services = t('Select at least one service')
-      if (familyServiceSelected && draft.familyCount < 1) next.familyCount = t('Add the number of people')
+      if (familyServiceSelected && (draft.familyCount < 1 || draft.familyCount > 10)) next.familyCount = t('Choose 1–10 people')
     }
     if (currentStep === 4) {
       if (!draft.eventDate) next.eventDate = t('Pick your event date')
@@ -193,9 +217,9 @@ export default function Enquiry() {
     try {
       if (hasBackend) {
         const review = buildLeadReview(draft, artist, unavailableDates)
-        await createEnquiry(artist.id, draft, review)
+        await createEnquiry(artist.id, { ...draft, venue: formatVenue(artist.city, draft.venue) }, review)
       } else {
-        store?.addLead(draft)
+        store?.addLead({ ...draft, venue: formatVenue(artist.city, draft.venue) })
       }
       localStorage.removeItem(draftKey)
       setSubmitted(true)
@@ -258,7 +282,7 @@ export default function Enquiry() {
               </div>
               <div className="flex items-center justify-between gap-3 border-b border-border/60 py-2.5">
                 <span className="text-muted-foreground">{t('Venue')}</span>
-                <span className="font-semibold">{draft.venue}</span>
+                <span className="font-semibold">{formatVenue(artist.city, draft.venue)}</span>
               </div>
               <div className="flex items-start justify-between gap-3 pt-2.5">
                 <span className="shrink-0 text-muted-foreground">{t('Services')}</span>
@@ -443,7 +467,7 @@ export default function Enquiry() {
                       <span className="w-6 text-center text-sm font-bold">{draft.familyCount}</span>
                       <button
                         type="button"
-                        onClick={() => update({ familyCount: Math.min(20, draft.familyCount + 1) })}
+                        onClick={() => update({ familyCount: Math.min(10, draft.familyCount + 1) })}
                         className="flex size-8 items-center justify-center rounded-full border border-border bg-card text-lg leading-none"
                         aria-label={t('More people')}
                       >+</button>
@@ -661,7 +685,7 @@ export default function Enquiry() {
                   </div>
                   <p className="mt-1.5 text-[13px] font-bold">{formatEventDateLong(draft.eventDate)}</p>
                   <p className="mt-0.5 text-[11px] text-muted-foreground">
-                    {draft.venue}{draft.readyBy ? ` · ${t('ready by {time}', { time: formatTime(draft.readyBy) })}` : ''}
+                    {formatVenue(artist.city, draft.venue)}{draft.readyBy ? ` · ${t('ready by {time}', { time: formatTime(draft.readyBy) })}` : ''}
                   </p>
                   {dateUnavailable && (
                     <p className="mt-1.5 flex items-center gap-1 text-[10px] font-semibold text-amber-700">

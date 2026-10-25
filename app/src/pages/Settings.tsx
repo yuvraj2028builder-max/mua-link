@@ -11,11 +11,12 @@ import LanguageToggle from '../components/LanguageToggle'
 import UserMenu from '../components/UserMenu'
 import { FullPageLoader } from '../components/RequireAuth'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
 import { initials, profileUrl } from '../lib/site'
 
 export default function Settings() {
   const { user, signOut, configured } = useAuth()
-  const { profile, loading } = useStore()
+  const { profile, loading, saveProfile } = useStore()
   const { lang, setLang, t } = useI18n()
   const navigate = useNavigate()
 
@@ -39,6 +40,16 @@ export default function Settings() {
   const handleSignOut = async () => {
     await signOut()
     navigate('/')
+  }
+
+  const togglePaused = async (paused: boolean) => {
+    if (!profile) return
+    try {
+      await saveProfile({ ...profile, paused })
+      toast.success(paused ? t('Your profile is paused') : t('Your profile is live'))
+    } catch (saveError) {
+      toast.error(saveError instanceof Error ? saveError.message : t('Could not update profile visibility'))
+    }
   }
 
   return (
@@ -112,13 +123,32 @@ export default function Settings() {
               <div>
                 <h2 className="text-lg">{t('Your public link')}</h2>
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  {profile.published ? t('This profile is live and can be shared.') : t('This profile is private until you publish it.')}
+                  {profile.published
+                    ? profile.paused
+                      ? t('Your profile is paused — saved changes will appear when you make it live.')
+                      : t('This profile is live and can be shared.')
+                    : t('This profile is private until you publish it.')}
                 </p>
               </div>
-              <span className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-bold ${profile.published ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
-                {profile.published ? t('Live') : t('Draft')}
+              <span className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-bold ${
+                profile.published && !profile.paused ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+              }`}>
+                {profile.published ? profile.paused ? t('Paused') : t('Live') : t('Draft')}
               </span>
             </div>
+            {profile.published && (
+              <div className="mt-4 flex items-center justify-between border-t border-border/60 pt-4">
+                <div>
+                  <p className="text-[12px] font-bold">{t('Profile visibility')}</p>
+                  <p className="mt-0.5 text-[10px] text-muted-foreground">{profile.paused ? t('Paused') : t('Live')}</p>
+                </div>
+                <Switch
+                  checked={!profile.paused}
+                  onCheckedChange={(live) => void togglePaused(!live)}
+                  aria-label={t('Profile visibility')}
+                />
+              </div>
+            )}
             <div className="mt-3 flex items-center gap-2 rounded-xl border border-border bg-secondary/50 p-1.5 pl-3">
               <p className="min-w-0 flex-1 truncate text-[11px] font-semibold">{link}</p>
               <Button size="sm" className="h-8 rounded-full text-[10px]" onClick={copyLink}>

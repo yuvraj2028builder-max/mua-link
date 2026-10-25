@@ -46,6 +46,16 @@ export function profileUrl(username: string) {
   return `${window.location.origin}${profilePath(username)}`
 }
 
+export function formatVenue(city: string, venue: string) {
+  const cleanCity = city.trim()
+  const cleanVenue = venue.trim()
+  if (!cleanCity) return cleanVenue
+  if (!cleanVenue) return cleanCity
+  if (cleanVenue.toLowerCase() === cleanCity.toLowerCase()) return cleanCity
+  if (cleanVenue.toLowerCase().startsWith(`${cleanCity.toLowerCase()} · `)) return cleanVenue
+  return `${cleanCity} · ${cleanVenue}`
+}
+
 export function normaliseWhatsApp(raw: string) {
   const digits = raw.replace(/\D/g, '')
   if (digits.length === 10) return `91${digits}`
@@ -135,14 +145,15 @@ export const statusMeta: Record<LeadStatus, { label: string; chip: string }> = {
   archived: { label: 'Archived', chip: 'border-stone-200 bg-stone-100 text-stone-500' },
 }
 
-export function leadReminderMessage(lead: Lead) {
+export function leadReminderMessage(lead: Lead, username: string, city = '') {
   return [
     '🔔 New Booking Request!',
     `From: ${lead.brideName}`,
     `Occasion: ${lead.occasion}`,
     `Date: ${formatEventDate(lead.eventDate)}`,
-    `Location: ${lead.venue || 'Not shared'}`,
+    `Location: ${formatVenue(city, lead.venue) || 'Not shared'}`,
     `Budget: ${lead.budget || 'Not shared'}`,
+    `Your MUALink profile: ${profileUrl(username)}`,
     `Open your MUALink dashboard to see full details and reply: ${window.location.origin}/dashboard`,
   ].join('\n')
 }

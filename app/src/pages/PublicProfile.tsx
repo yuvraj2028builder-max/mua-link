@@ -20,7 +20,7 @@ import SiteFooter from '../components/SiteFooter'
 import LanguageToggle from '../components/LanguageToggle'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { formatTime, inr } from '../lib/site'
+import { formatTime, inr, profileUrl } from '../lib/site'
 import { usePublicArtist } from '../hooks/usePublicArtist'
 import { useI18n } from '../i18n'
 import { useAuth } from '../auth/AuthProvider'
@@ -57,7 +57,7 @@ export default function PublicProfile() {
     noindex: !profile,
   })
 
-  if (loading) {
+  if (!username || loading) {
     return (
       <PageShell>
         <LoaderCircle className="mt-10 size-6 animate-spin text-primary" />
@@ -93,6 +93,17 @@ export default function PublicProfile() {
     )
   }
 
+  if (profile.paused) {
+    return (
+      <PageShell>
+        <h1 className="mt-10 text-3xl sm:text-4xl">{profile.fullName}</h1>
+        <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+          {t('{name} has paused bookings for now.', { name: profile.fullName })}
+        </p>
+      </PageShell>
+    )
+  }
+
   const services = profile.services.filter((service) => service.visible)
   const tags = ['All', ...Array.from(new Set(profile.portfolio.map((item) => item.tag)))]
   const shown = activeTag === 'All'
@@ -105,7 +116,7 @@ export default function PublicProfile() {
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/p/${profile.username}`)
+      await navigator.clipboard.writeText(profileUrl(profile.username))
       toast.success(t('Profile link copied'))
     } catch {
       toast.error(t('Could not copy — long-press the address bar instead'))
