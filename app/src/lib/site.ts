@@ -1,7 +1,7 @@
 import { differenceInCalendarDays, format, parseISO } from 'date-fns'
 import type { FitLabel, Lead, LeadStatus } from '../types'
 
-export const SITE_URL = 'https://mua-link-na7g.vercel.app'
+export const SITE_URL = 'https://mualink.vercel.app'
 
 export function siteOrigin() {
   if (typeof window === 'undefined') return SITE_URL
