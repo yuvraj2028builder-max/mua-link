@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { siteOrigin } from './site'
 
 interface PageMeta {
   title: string
@@ -27,9 +28,19 @@ export function usePageMeta({ title, description, image, noindex }: PageMeta) {
     }
     upsert('meta[property="og:title"]', 'property', 'og:title', title)
     upsert('meta[name="twitter:title"]', 'name', 'twitter:title', title)
-    upsert('meta[property="og:url"]', 'property', 'og:url', window.location.href)
+    const origin = siteOrigin()
+    const pageUrl = `${origin}${window.location.pathname}${window.location.search}`
+    upsert('meta[property="og:url"]', 'property', 'og:url', pageUrl)
 
-    const imageUrl = image ? new URL(image, window.location.origin).href : `${window.location.origin}/images/hero.jpg`
+    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.rel = 'canonical'
+      document.head.appendChild(canonical)
+    }
+    canonical.href = pageUrl
+
+    const imageUrl = new URL(image || '/images/hero.jpg', origin).href
     upsert('meta[property="og:image"]', 'property', 'og:image', imageUrl)
     upsert('meta[name="twitter:image"]', 'name', 'twitter:image', imageUrl)
 

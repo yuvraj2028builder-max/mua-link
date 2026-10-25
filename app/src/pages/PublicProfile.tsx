@@ -44,7 +44,9 @@ export default function PublicProfile() {
   const [lightbox, setLightbox] = useState<number | null>(null)
 
   const createPath = configured ? (user ? '/dashboard' : '/signin') : '/onboarding'
-  const cover = profile?.portfolio[0]?.url || profile?.profilePhoto || '/images/cover.jpg'
+  const cover = profile?.isDemo
+    ? '/images/cover.jpg'
+    : profile?.portfolio[0]?.url || profile?.profilePhoto || '/images/cover.jpg'
 
   usePageMeta({
     title: profile
@@ -147,7 +149,7 @@ export default function PublicProfile() {
       </header>
 
       <div className="relative h-[300px] sm:h-[400px]">
-        <img src={cover} alt={t('{name} portfolio cover', { name: profile.fullName })} className="size-full object-cover object-center" />
+        <img src={cover} alt={t('{name} portfolio cover', { name: profile.fullName })} className="size-full object-cover object-[center_30%]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-black/25" />
         <div className="absolute inset-x-0 bottom-4">
           <div className="page-shell flex items-center justify-end gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">

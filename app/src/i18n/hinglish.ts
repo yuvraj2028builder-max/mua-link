@@ -666,4 +666,113 @@ export const hinglish: Record<string, string> = {
   'Last updated {date}': 'Aakhri update {date}',
   'Legal text is kept in English for accuracy. The rest of the app and all forms work in Hinglish.':
     'Legal text sahi rehne ke liye English mein rakha gaya hai. Baaki app aur saare forms Hinglish mein kaam karte hain.',
+
+  // Landing refresh
+  'Your page': 'Aapka page',
+  'Pricing': 'Pricing',
+  'A calmer way for Indian makeup artists to receive and book enquiries.':
+    'Indian makeup artists ke liye enquiries lene aur bookings karne ka ek shaant tareeqa.',
+  'Free in V1 · No commission · Your number stays private':
+    'V1 mein free · Koi commission nahi · Aapka number private',
+  'One link for your work. Every bride shares her date, venue and budget before you reply.':
+    'Aapke kaam ke liye ek link. Bride apni date, venue aur budget pehle hi bhej deti hai — phir aap reply karein.',
+  'Free in V1': 'V1 mein free',
+  'Planning a wedding?': 'Shaadi plan kar rahi hain?',
+  'See a real profile': 'Asli profile dekhein',
+  'Three steps. Then you\'re booked.': 'Teen kadam. Phir booking.',
+  'No new app. No commission. No cold DMs.': 'Naya app nahi. Commission nahi. Cold DMs nahi.',
+  'Your portfolio, services and prices on one page.': 'Aapka portfolio, services aur prices ek hi page par.',
+  'Seven quick questions. No account needed.': 'Saat chhote sawaal. Account ki zaroorat nahi.',
+  'She sends the details': 'Woh details bhej deti hai',
+  'You reply on WhatsApp': 'Aap WhatsApp par reply karein',
+  'A complete brief, with a ready-to-send opener.': 'Poora brief, aur ek ready-to-send opener.',
+  'This is what lands in your inbox.': 'Yeh seedha aapke inbox mein aata hai.',
+  'Portfolio, services, cities and availability — one link built for Instagram.':
+    'Portfolio, services, cities aur availability — Instagram ke liye ek hi link.',
+  'Built for solo artists, not studios.': 'Solo artists ke liye, studios ke liye nahi.',
+  'The calm bits matter as much as the pretty page.': 'Sundar page jitna zaroori hai, shaanti bhi utni hi.',
+  'No commission': 'Koi commission nahi',
+  'You keep every rupee you earn.': 'Aapki kamai ka har rupaya aapka.',
+  'No card. No trial timer.': 'Na card, na trial timer.',
+  'You start the WhatsApp chat.': 'WhatsApp chat aap shuru karte hain.',
+  'No app for brides': 'Brides ko app nahi chahiye',
+  'A link. Seven questions. Done.': 'Ek link. Saat sawaal. Ho gaya.',
+  '₹0 in V1.': 'V1 mein ₹0.',
+  'No card. No commission. No trial timer. If that changes, you will hear it from us first.':
+    'Na card. Na commission. Na trial timer. Agar kabhi badlega, hum pehle batayenge.',
+  'Straight answers.': 'Seedhe jawaab.',
+  'The questions every artist asks.': 'Har artist ke yeh sawaal.',
+  'Still unsure? Open the sample profile and see exactly what a bride sees.':
+    'Phir bhi doubt hai? Sample profile kholkar dekhein bride ko kya dikhta hai.',
+  'Do brides need an account?': 'Brides ko account chahiye?',
+  'No. She opens your link, answers seven quick questions and sends the request.':
+    'Nahi. Woh aapka link kholti hai, saat chhote sawaal ka jawaab deti hai aur request bhej deti hai.',
+  'Is it really free?': 'Kya yeh sach mein free hai?',
+  'Yes, in V1. No commission, no card and no trial timer. If that changes, you will hear it from us first.':
+    'Haan, V1 mein. Na commission, na card, na trial timer. Agar kabhi badlega, hum pehle batayenge.',
+  'Will brides see my number?': 'Brides ko mera number dikhega?',
+  'No. Your number stays private until you choose to reply on WhatsApp.':
+    'Nahi. Aapka number tab tak private rehta hai jab tak aap WhatsApp par reply na karein.',
+  'Do I need to download anything?': 'Kuch download karna padega?',
+  'No. MUALink works in your phone browser, for you and for brides.':
+    'Nahi. MUALink aapke phone ke browser mein chalta hai — aapke aur bride, dono ke liye.',
+  'One link. Then it\'s booked.': 'Ek link. Phir booking.',
+  'Free in V1 · No commission': 'V1 mein free · Koi commission nahi',
+
+  // Landing 2.0
+  'Create link': 'Link banayein',
+  'For makeup artists in Delhi NCR': 'Delhi NCR ke makeup artists ke liye',
+  'Get booked.': 'Booking ho jaye.',
+  'Not buried in DMs.': 'DMs mein dabne ke bina.',
+  'One beautiful link for your work, prices and dates. Brides share their details once — you reply on WhatsApp with the full picture.':
+    'Aapke kaam, prices aur dates ke liye ek sundar link. Bride apni details ek hi baar mein bhej deti hai — aap poora picture saamne rakhkar WhatsApp par reply karein.',
+  'Create your free link': 'Apna free link banayein',
+  'Browse Priyanka’s profile': 'Priyanka ki profile dekhein',
+  'Three steps. Then it’s handled.': 'Teen kadam. Baaki sab set.',
+  'Share your link': 'Apna link share karein',
+  'Add it to your Instagram bio. One tap opens your work, prices and dates.':
+    'Isko Instagram bio mein lagayein. Ek tap mein aapka kaam, prices aur dates khul jaate hain.',
+  'She tells you everything': 'Woh sab kuch bata deti hai',
+  'Date, venue, budget, services. Seven short questions, no account needed.':
+    'Date, venue, budget, services. Saat chhote sawaal, account ki zaroorat nahi.',
+  'Reply with the full picture': 'Poori jaankari ke saath reply karein',
+  'Get the complete brief and a warm opener. Reply on WhatsApp when you’re ready.':
+    'Poora brief aur ek pyaara opener milta hai. Jab ready hon, WhatsApp par reply karein.',
+  'Open the live profile': 'Live profile kholein',
+  'Link in bio': 'Bio mein link',
+  'Looks like a mini website — not another app.': 'Ek chhoti website jaisa — naya app nahi.',
+  'Portfolio · Prices · Dates': 'Portfolio · Prices · Dates',
+  'Wedding date': 'Shaadi ki date',
+  'Bridal + family': 'Bridal + family',
+  'Seven calm screens. Her answers save as she goes.':
+    'Saat aaramdayak screens. Uski answers apne aap save hoti jaati hain.',
+  'Your opener': 'Aapka opener',
+  'Your number stays private. You start the chat.': 'Aapka number private rehta hai. Chat aap shuru karte hain.',
+  'One tap opens WhatsApp with the message ready.': 'Ek tap mein WhatsApp khulta hai, message ready.',
+  'Just now': 'Abhi abhi',
+  'The Leela, Gurgaon': 'The Leela, Gurgaon',
+  'You keep every rupee': 'Har rupaya aapka',
+  'No commission on bookings. Your price is your price.': 'Booking par koi commission nahi. Aapka price aapka hi price hai.',
+  'Only you can start the WhatsApp chat.': 'WhatsApp chat sirf aap shuru kar sakte hain.',
+  'A link and seven quick questions. That’s the whole ask.': 'Ek link aur saat chhote sawaal. Bas itna hi.',
+  'No card, no timer': 'Na card, na timer',
+  'Free in V1. If anything changes, we’ll tell you first.': 'V1 mein free. Kuch badlega toh pehle aapko batayenge.',
+  'What does it cost?': 'Iska kharcha kitna hai?',
+  'Nothing in V1. No commission, no card and no trial timer.':
+    'V1 mein kuch nahi. Na commission, na card, na trial timer.',
+  'Do I need a new app?': 'Koi naya app chahiye?',
+  'No. MUALink works in your phone browser — for you and for brides.':
+    'Nahi. MUALink aapke phone browser mein chalta hai — aapke aur bride, dono ke liye.',
+  'How long does setup take?': 'Setup mein kitna time lagta hai?',
+  'About ten minutes: your photos, services, prices and available dates.':
+    'Lagbhag das minute: aapki photos, services, prices aur available dates.',
+  'What if a request isn’t a fit?': 'Agar request fit na ho toh?',
+  'Archive it or mark it lost. Nothing is booked or charged automatically.':
+    'Use archive karein ya lost mark karein. Kuch bhi apne aap book ya charge nahi hota.',
+  'No card details. Ever.': 'Card details kabhi nahi.',
+  'Our promises': 'Hamare vaade',
+  'Still unsure? Open the live profile and see exactly what a bride sees.':
+    'Phir bhi doubt hai? Live profile kholkar dekhein bride ko kya dikhta hai.',
+  'Give her a page worth stopping for. Set up your profile in ten minutes, share the link, and let the form do the asking.':
+    'Use aisa page dein jahan woh ruk kar dekhe. Das minute mein profile set karein, link share karein, aur sawaal form ko karne dein.',
 }

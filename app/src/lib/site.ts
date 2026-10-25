@@ -1,6 +1,14 @@
 import { differenceInCalendarDays, format, parseISO } from 'date-fns'
 import type { FitLabel, Lead, LeadStatus } from '../types'
 
+export const SITE_URL = 'https://mua-link-na7g.vercel.app'
+
+export function siteOrigin() {
+  if (typeof window === 'undefined') return SITE_URL
+  const { origin } = window.location
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin) ? SITE_URL : origin
+}
+
 export const RESERVED_USERNAMES = [
   'admin', 'support', 'api', 'login', 'signup', 'dashboard', 'help', 'mualink', 'www',
   'p', 'profile', 'onboarding', 'settings', 'about', 'terms', 'privacy',
@@ -43,7 +51,11 @@ export function profilePath(username: string) {
 }
 
 export function profileUrl(username: string) {
-  return `${window.location.origin}${profilePath(username)}`
+  return `${siteOrigin()}${profilePath(username)}`
+}
+
+export function profileDisplayUrl(username: string) {
+  return profileUrl(username).replace(/^https?:\/\//, '')
 }
 
 export function formatVenue(city: string, venue: string) {
@@ -154,7 +166,7 @@ export function leadReminderMessage(lead: Lead, username: string, city = '') {
     `Location: ${formatVenue(city, lead.venue) || 'Not shared'}`,
     `Budget: ${lead.budget || 'Not shared'}`,
     `Your MUALink profile: ${profileUrl(username)}`,
-    `Open your MUALink dashboard to see full details and reply: ${window.location.origin}/dashboard`,
+    `Open your MUALink dashboard to see full details and reply: ${siteOrigin()}/dashboard`,
   ].join('\n')
 }
 

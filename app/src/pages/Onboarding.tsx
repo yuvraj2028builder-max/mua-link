@@ -914,7 +914,7 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
 
               <div className="mt-5 overflow-hidden rounded-2xl border border-border/70">
                 <div className="relative h-36">
-                  <img src={form.portfolio[0]?.url || '/images/hero.jpg'} alt={t('Cover')} className="size-full object-cover" />
+                  <img src={form.portfolio[0]?.url || '/images/hero.jpg'} alt={t('Cover')} className="size-full object-cover object-[center_30%]" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
                   <div className="absolute bottom-3 left-4 right-4">
                     <p className="font-display text-2xl text-white">{form.fullName || t('Your name')}</p>

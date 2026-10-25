@@ -17,8 +17,8 @@ export default function SiteHeader() {
 
   const navItems = [
     { label: t('How it works'), href: '#how-it-works' },
-    { label: t('Why MUALink'), href: '#why' },
-    { label: t('For brides'), href: '/p/priyanka' },
+    { label: t('Your page'), href: '#profile' },
+    { label: t('Pricing'), href: '#pricing' },
   ]
 
   const createPath = configured ? (user ? '/onboarding' : '/signin') : '/onboarding'
@@ -44,6 +44,14 @@ export default function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <LanguageToggle className="hidden sm:inline-flex" />
+
+          <Link
+            to="/p/priyanka"
+            className="hidden items-center gap-1 whitespace-nowrap px-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground xl:inline-flex"
+          >
+            {t('For brides')}
+            <ArrowUpRight className="size-3.5" />
+          </Link>
 
           {configured && user ? (
             <>
@@ -71,6 +79,13 @@ export default function SiteHeader() {
             </div>
           )}
 
+          <Button asChild size="sm" className="rounded-full pl-3.5 pr-2.5 lg:hidden">
+            <Link to={user ? '/dashboard' : createPath}>
+              {user ? t('Dashboard') : t('Create link')}
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+          </Button>
+
           <button
             type="button"
             onClick={() => setOpen((value) => !value)}
@@ -96,6 +111,9 @@ export default function SiteHeader() {
                 </Link>
               ),
             )}
+            <Link to="/p/priyanka" onClick={() => setOpen(false)} className="border-b border-border/50 py-3 text-sm font-medium">
+              {t('For brides')}
+            </Link>
             {configured && user && profile && (
               <Link to={`/p/${profile.username}`} onClick={() => setOpen(false)} className="border-b border-border/50 py-3 text-sm font-medium">
                 {t('My public profile')}
