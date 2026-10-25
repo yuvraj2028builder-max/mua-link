@@ -1,0 +1,17 @@
+{
+  "name": "MUALink",
+  "short_name": "MUALink",
+  "description": "One profile link. Complete bride enquiries. Built for makeup artists in India.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf7f4",
+  "theme_color": "#5c3a46",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
