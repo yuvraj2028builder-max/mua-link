@@ -46,6 +46,7 @@ import {
   formatVenue,
   initials,
   leadReminderMessage,
+  profilePath,
   profileUrl,
   statusMeta,
   waLink,
@@ -191,7 +192,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-2">
             <LanguageToggle className="hidden sm:inline-flex" />
             <Button asChild variant="ghost" size="sm" className="hidden rounded-full sm:inline-flex">
-              <Link to={`/p/${profile.username}`}>
+              <Link to={profilePath(profile.username)}>
                 {t('View profile')} <ArrowUpRight className="size-3.5" />
               </Link>
             </Button>
@@ -406,7 +407,7 @@ export default function Dashboard() {
                 </p>
                 {!search && tab === 'new' && (
                   <Button asChild variant="outline" size="sm" className="mt-4 rounded-full">
-                    <Link to={`/p/${profile.username}`}>{t('See your public profile')}</Link>
+                    <Link to={profilePath(profile.username)}>{t('See your public profile')}</Link>
                   </Button>
                 )}
               </div>
@@ -440,7 +441,7 @@ export default function Dashboard() {
                 </Button>
               </div>
 
-              <Link to={`/p/${profile.username}`} className="mt-3 flex items-center justify-center gap-1 text-[10px] font-bold text-primary">
+              <Link to={profilePath(profile.username)} className="mt-3 flex items-center justify-center gap-1 text-[10px] font-bold text-primary">
                 {t('Preview your profile')} <ArrowUpRight className="size-3" />
               </Link>
             </div>

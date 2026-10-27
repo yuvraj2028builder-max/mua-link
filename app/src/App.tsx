@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { Link, Route, Routes, useLocation, useNavigate } from 'react-router'
+import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import './App.css'
 import { AuthProvider } from './auth/AuthProvider'
@@ -10,10 +10,12 @@ import { Button } from '@/components/ui/button'
 import Logo from './components/Logo'
 import { FullPageLoader, RequireAuth } from './components/RequireAuth'
 import { usePageMeta } from './lib/seo'
+import { profilePath } from './lib/site'
 
 const Landing = lazy(() => import('./pages/Landing'))
 const PublicProfile = lazy(() => import('./pages/PublicProfile'))
 const Enquiry = lazy(() => import('./pages/Enquiry'))
+const Claim = lazy(() => import('./pages/Claim'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 const SignIn = lazy(() => import('./pages/SignIn'))
@@ -41,6 +43,12 @@ function AuthRedirect() {
   }, [location.hash, location.pathname, location.search, navigate])
 
   return null
+}
+
+function LegacyProfileRedirect() {
+  const { username } = useParams()
+  const { search, hash } = useLocation()
+  return <Navigate to={{ pathname: profilePath(username || ''), search, hash }} replace />
 }
 
 function NotFound() {
@@ -71,7 +79,9 @@ export default function App() {
           <Suspense fallback={<FullPageLoader />}>
             <Routes>
               <Route path="/" element={<Landing />} />
-              <Route path="/p/:username" element={<PublicProfile />} />
+              <Route path="/:username" element={<PublicProfile />} />
+              <Route path="/claim/:username" element={<Claim />} />
+              <Route path="/p/:username" element={<LegacyProfileRedirect />} />
               <Route path="/p/:username/request" element={<Enquiry />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/auth/callback" element={<AuthCallback />} />

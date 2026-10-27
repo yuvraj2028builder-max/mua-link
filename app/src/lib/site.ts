@@ -10,8 +10,8 @@ export function siteOrigin() {
 }
 
 export const RESERVED_USERNAMES = [
-  'admin', 'support', 'api', 'login', 'signup', 'dashboard', 'help', 'mualink', 'www',
-  'p', 'profile', 'onboarding', 'settings', 'about', 'terms', 'privacy',
+  'admin', 'support', 'api', 'login', 'signup', 'signin', 'auth', 'dashboard', 'help', 'mualink', 'www',
+  'p', 'profile', 'preview', 'claim', 'onboarding', 'settings', 'about', 'terms', 'privacy',
 ]
 
 export const occasions = [
@@ -46,8 +46,21 @@ export function slugify(value: string) {
     .slice(0, 30)
 }
 
+export function normaliseUsername(value: string | undefined) {
+  return (value || '').trim().toLowerCase()
+}
+
+export function isValidProfileUsername(value: string) {
+  const username = normaliseUsername(value)
+  return /^[a-z0-9_]{3,30}$/.test(username) && !RESERVED_USERNAMES.includes(username)
+}
+
 export function profilePath(username: string) {
-  return `/p/${username}`
+  return `/${normaliseUsername(username)}`
+}
+
+export function requestPath(username: string) {
+  return `/p/${normaliseUsername(username)}/request`
 }
 
 export function profileUrl(username: string) {

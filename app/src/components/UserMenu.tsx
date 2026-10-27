@@ -3,7 +3,7 @@ import { ArrowUpRight, LayoutDashboard, LogOut, Pencil, UserRound } from 'lucide
 import { useAuth } from '../auth/AuthProvider'
 import { useStore } from '../store'
 import { useI18n } from '../i18n'
-import { initials } from '../lib/site'
+import { initials, profilePath } from '../lib/site'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -59,7 +59,7 @@ export default function UserMenu() {
         </DropdownMenuItem>
         {profile && (
           <DropdownMenuItem asChild>
-            <Link to={`/p/${profile.username}`} className="cursor-pointer text-[12px] font-semibold">
+            <Link to={profilePath(profile.username)} className="cursor-pointer text-[12px] font-semibold">
               <UserRound className="size-4" /> {t('View public profile')}
             </Link>
           </DropdownMenuItem>

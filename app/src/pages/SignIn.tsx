@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { useAuth } from '../auth/AuthProvider'
 import { useI18n } from '../i18n'
 import { usePageMeta } from '../lib/seo'
+import { profilePath } from '../lib/site'
 import Logo from '../components/Logo'
 import LanguageToggle from '../components/LanguageToggle'
 import { Button } from '@/components/ui/button'
@@ -140,7 +141,7 @@ export default function SignIn() {
             </div>
 
             <Link
-              to="/p/priyanka"
+              to={profilePath('priyanka')}
               className="mt-4 flex items-center justify-between rounded-xl border border-border/70 bg-secondary/40 px-4 py-3 text-[11px] font-bold transition-colors hover:border-primary/30"
             >
               <span className="flex items-center gap-2">

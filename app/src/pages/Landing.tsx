@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '../auth/AuthProvider'
 import { useI18n } from '../i18n'
 import { usePageMeta } from '../lib/seo'
-import { profileDisplayUrl, profileUrl } from '../lib/site'
+import { profileDisplayUrl, profilePath, profileUrl } from '../lib/site'
 
 type TFn = (english: string, vars?: Record<string, string | number>) => string
 
@@ -138,7 +138,7 @@ function HeroVisual({ t }: { t: TFn }) {
           <p className="mt-0.5 whitespace-nowrap font-display text-lg leading-tight">Priyanka Sharma</p>
         </div>
         <Link
-          to="/p/priyanka"
+          to={profilePath('priyanka')}
           className="flex min-w-0 items-center gap-1 text-[9.5px] font-semibold text-primary transition-colors hover:text-primary/70 sm:text-[10px]"
         >
           <span>{liveUrl}</span>
@@ -459,7 +459,7 @@ export default function Landing() {
                   size="lg"
                   className="hidden h-12 rounded-full border-primary/20 bg-card/60 px-6 text-sm sm:inline-flex"
                 >
-                  <Link to="/p/priyanka">
+                  <Link to={profilePath('priyanka')}>
                     {t('See a real profile')}
                     <ArrowUpRight className="size-4" />
                   </Link>
@@ -468,7 +468,7 @@ export default function Landing() {
 
               <p className="mt-4 flex items-center gap-1 text-[12.5px] text-muted-foreground">
                 {t('Planning a wedding?')}{' '}
-                <Link to="/p/priyanka" className="inline-flex items-center gap-0.5 font-semibold text-primary link-underline">
+                <Link to={profilePath('priyanka')} className="inline-flex items-center gap-0.5 font-semibold text-primary link-underline">
                   {t('Browse Priyanka’s profile')}
                   <ArrowUpRight className="size-3" />
                 </Link>
@@ -573,7 +573,7 @@ export default function Landing() {
 
                   <div className="mt-6 border-t border-border/60 pt-5">
                     <Link
-                      to="/p/priyanka"
+                      to={profilePath('priyanka')}
                       className="inline-flex items-center gap-1.5 text-[11px] font-bold text-primary link-underline"
                     >
                       {t('Open the live profile')}
@@ -635,7 +635,7 @@ export default function Landing() {
               </div>
 
               <Button asChild variant="outline" className="mt-8 rounded-full border-primary/20 bg-card/60">
-                <Link to="/p/priyanka">
+                <Link to={profilePath('priyanka')}>
                   {t('Open the live profile')}
                   <ArrowUpRight className="size-4" />
                 </Link>
@@ -719,7 +719,7 @@ export default function Landing() {
                 {t('Still unsure? Open the live profile and see exactly what a bride sees.')}
               </p>
               <Button asChild variant="outline" className="mt-6 rounded-full border-primary/20 bg-card/60">
-                <Link to="/p/priyanka">
+                <Link to={profilePath('priyanka')}>
                   {t('See a real profile')}
                   <ArrowUpRight className="size-4" />
                 </Link>
@@ -778,7 +778,7 @@ export default function Landing() {
                   variant="outline"
                   className="h-12 rounded-full border-white/20 bg-transparent px-6 text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Link to="/p/priyanka">
+                  <Link to={profilePath('priyanka')}>
                     {t('See a real profile')}
                     <ArrowUpRight className="size-4" />
                   </Link>

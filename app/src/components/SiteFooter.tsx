@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import Logo from './Logo'
 import { useI18n } from '../i18n'
+import { profilePath, requestPath } from '../lib/site'
 
 export default function SiteFooter() {
   const { t } = useI18n()
@@ -22,8 +23,8 @@ export default function SiteFooter() {
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">{t('Product')}</p>
           <ul className="mt-4 space-y-3 text-sm">
             <li><Link to="/signin" className="link-underline text-foreground/80">{t('Create a profile')}</Link></li>
-            <li><Link to="/p/priyanka" className="link-underline text-foreground/80">{t('Sample profile')}</Link></li>
-            <li><Link to="/p/priyanka/request" className="link-underline text-foreground/80">{t('Bride request form')}</Link></li>
+            <li><Link to={profilePath('priyanka')} className="link-underline text-foreground/80">{t('Sample profile')}</Link></li>
+            <li><Link to={requestPath('priyanka')} className="link-underline text-foreground/80">{t('Bride request form')}</Link></li>
             <li><Link to="/dashboard" className="link-underline text-foreground/80">{t('MUA dashboard')}</Link></li>
           </ul>
         </div>

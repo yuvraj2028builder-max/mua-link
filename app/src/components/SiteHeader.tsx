@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '../auth/AuthProvider'
 import { useStore } from '../store'
 import { useI18n } from '../i18n'
+import { profilePath } from '../lib/site'
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false)
@@ -46,7 +47,7 @@ export default function SiteHeader() {
           <LanguageToggle className="hidden sm:inline-flex" />
 
           <Link
-            to="/p/priyanka"
+            to={profilePath('priyanka')}
             className="hidden items-center gap-1 whitespace-nowrap px-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground xl:inline-flex"
           >
             {t('For brides')}
@@ -111,11 +112,11 @@ export default function SiteHeader() {
                 </Link>
               ),
             )}
-            <Link to="/p/priyanka" onClick={() => setOpen(false)} className="border-b border-border/50 py-3 text-sm font-medium">
+            <Link to={profilePath('priyanka')} onClick={() => setOpen(false)} className="border-b border-border/50 py-3 text-sm font-medium">
               {t('For brides')}
             </Link>
             {configured && user && profile && (
-              <Link to={`/p/${profile.username}`} onClick={() => setOpen(false)} className="border-b border-border/50 py-3 text-sm font-medium">
+              <Link to={profilePath(profile.username)} onClick={() => setOpen(false)} className="border-b border-border/50 py-3 text-sm font-medium">
                 {t('My public profile')}
               </Link>
             )}

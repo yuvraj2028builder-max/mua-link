@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
 import {
   ArrowRight,
@@ -13,6 +13,7 @@ import {
   Plane,
   Share2,
   Sparkles,
+  Zap,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import Logo from '../components/Logo'
@@ -20,7 +21,17 @@ import SiteFooter from '../components/SiteFooter'
 import LanguageToggle from '../components/LanguageToggle'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { formatTime, inr, profileUrl } from '../lib/site'
+import {
+  formatTime,
+  inr,
+  isValidProfileUsername,
+  normaliseUsername,
+  profileUrl,
+  requestPath,
+} from '../lib/site'
+import { previewProfile } from '../lib/previews'
+import { isUsernameTaken } from '../lib/api'
+import { hasBackend } from '../lib/supabase'
 import { usePublicArtist } from '../hooks/usePublicArtist'
 import { useI18n } from '../i18n'
 import { useAuth } from '../auth/AuthProvider'
@@ -35,28 +46,85 @@ function PageShell({ children }: { children: ReactNode }) {
   )
 }
 
+function PreviewBanner({
+  username,
+  t,
+}: {
+  username: string
+  t: (key: string, vars?: Record<string, string | number>) => string
+}) {
+  return (
+    <div className="fixed inset-x-0 top-0 z-50 border-b border-primary/20 bg-primary text-primary-foreground">
+      <div className="page-shell flex h-[84px] flex-col justify-center gap-1.5 py-2 sm:h-14 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-0">
+        <p className="flex items-start gap-1.5 text-[10.5px] font-semibold leading-snug sm:items-center sm:text-[12px]">
+          <Zap className="mt-px size-3.5 shrink-0 text-[hsl(var(--gold-soft))] sm:mt-0" />
+          <span>{t('This is a preview page built for @{username}.', { username })}</span>
+        </p>
+        <Link
+          to={`/claim/${username}`}
+          className="inline-flex h-8 w-full shrink-0 items-center justify-center gap-1.5 rounded-full bg-white px-3.5 text-[10.5px] font-bold text-primary transition-colors hover:bg-white/90 sm:w-auto sm:text-[11px]"
+        >
+          {t('Claim this profile free (1-click)')}
+          <ArrowRight className="size-3.5" />
+        </Link>
+      </div>
+    </div>
+  )
+}
+
 export default function PublicProfile() {
   const { username } = useParams()
-  const { artist: profile, loading, error } = usePublicArtist(username)
+  const slug = normaliseUsername(username)
+  const validUsername = isValidProfileUsername(slug)
+  const { artist: realProfile, loading, error } = usePublicArtist(slug)
   const { t } = useI18n()
   const { configured, user } = useAuth()
   const [activeTag, setActiveTag] = useState('All')
   const [lightbox, setLightbox] = useState<number | null>(null)
+  const [claimResult, setClaimResult] = useState<{ slug: string; taken: boolean } | null>(null)
 
+  useEffect(() => {
+    if (!validUsername || realProfile || !hasBackend) return
+
+    let active = true
+    isUsernameTaken(slug)
+      .then((taken) => {
+        if (active) setClaimResult({ slug, taken })
+      })
+      .catch(() => {
+        if (active) setClaimResult({ slug, taken: false })
+      })
+
+    return () => { active = false }
+  }, [realProfile, slug, validUsername])
+
+  const claimState: 'checking' | 'free' | 'taken' = !hasBackend || realProfile
+    ? 'free'
+    : claimResult?.slug === slug
+      ? claimResult.taken ? 'taken' : 'free'
+      : 'checking'
+
+  const isPreview = validUsername && !realProfile && claimState === 'free'
+  const profile = realProfile || (isPreview ? previewProfile(slug) : null)
   const createPath = configured ? (user ? '/dashboard' : '/signin') : '/onboarding'
+  const claimPath = `/claim/${slug}`
   const cover = profile?.isDemo
     ? '/images/cover.jpg'
     : profile?.portfolio[0]?.url || profile?.profilePhoto || '/images/cover.jpg'
 
   usePageMeta({
-    title: profile
-      ? `${profile.fullName} — Bridal makeup artist in ${profile.city} | MUALink`
-      : 'Artist profile | MUALink',
-    description: profile
-      ? `${profile.fullName} · ${profile.city}. ${profile.bio}`.slice(0, 160)
-      : undefined,
+    title: isPreview
+      ? `${t('Preview profile')} — ${profile?.fullName} | MUALink`
+      : profile
+        ? `${profile.fullName} — Bridal makeup artist in ${profile.city} | MUALink`
+        : 'Artist profile | MUALink',
+    description: isPreview
+      ? t('This is a preview page built for @{username} on MUALink.', { username: slug })
+      : profile
+        ? `${profile.fullName} · ${profile.city}. ${profile.bio}`.slice(0, 160)
+        : undefined,
     image: profile ? cover : undefined,
-    noindex: !profile,
+    noindex: isPreview || !profile,
   })
 
   if (!username || loading) {
@@ -64,6 +132,20 @@ export default function PublicProfile() {
       <PageShell>
         <LoaderCircle className="mt-10 size-6 animate-spin text-primary" />
         <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{t('Opening this profile…')}</p>
+      </PageShell>
+    )
+  }
+
+  if (!validUsername) {
+    return (
+      <PageShell>
+        <h1 className="mt-10 text-4xl sm:text-5xl">{t('This link isn’t available.')}</h1>
+        <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+          {t('The link may have changed, or it isn’t a profile link.')}
+        </p>
+        <Button asChild className="mt-7 rounded-full">
+          <Link to="/">{t('Explore MUALink')}</Link>
+        </Button>
       </PageShell>
     )
   }
@@ -77,6 +159,29 @@ export default function PublicProfile() {
           <Button className="rounded-full" onClick={() => window.location.reload()}>{t('Try again')}</Button>
           <Button asChild variant="outline" className="rounded-full"><Link to="/">{t('Go home')}</Link></Button>
         </div>
+      </PageShell>
+    )
+  }
+
+  if (!profile && hasBackend && claimState === 'checking') {
+    return (
+      <PageShell>
+        <LoaderCircle className="mt-10 size-6 animate-spin text-primary" />
+        <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{t('Checking this link…')}</p>
+      </PageShell>
+    )
+  }
+
+  if (!profile && claimState === 'taken') {
+    return (
+      <PageShell>
+        <h1 className="mt-10 text-3xl sm:text-4xl">{t('This profile is being set up.')}</h1>
+        <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+          {t('The artist has claimed this link and is finishing her page. Check back soon.')}
+        </p>
+        <Button asChild className="mt-7 rounded-full">
+          <Link to="/">{t('Explore MUALink')}</Link>
+        </Button>
       </PageShell>
     )
   }
@@ -119,34 +224,37 @@ export default function PublicProfile() {
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(profileUrl(profile.username))
-      toast.success(t('Profile link copied'))
+      toast.success(isPreview ? t('Preview link copied') : t('Profile link copied'))
     } catch {
       toast.error(t('Could not copy — long-press the address bar instead'))
     }
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24 sm:pb-0">
-      <header className="absolute inset-x-0 top-0 z-30">
-        <div className="page-shell flex h-16 items-center justify-between gap-3">
-          <Logo light />
-          <div className="flex items-center gap-1.5">
-            <LanguageToggle tone="light" />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={copyLink}
-              className="rounded-full text-white hover:bg-white/15 hover:text-white"
-            >
-              <Share2 className="size-4" />
-              <span className="hidden sm:inline">{t('Share')}</span>
-            </Button>
-            <Button asChild size="sm" variant="secondary" className="rounded-full bg-white/90 text-foreground hover:bg-white">
-              <Link to={createPath}>{t('Create your link')}</Link>
-            </Button>
+    <>
+      {isPreview && <PreviewBanner username={slug} t={t} />}
+      {isPreview && <div className="h-[84px] sm:h-14" aria-hidden="true" />}
+      <div className="relative min-h-screen bg-background pb-24 sm:pb-0">
+        <header className="absolute inset-x-0 top-0 z-30">
+          <div className="page-shell flex h-16 items-center justify-between gap-3">
+            <Logo light />
+            <div className="flex items-center gap-1.5">
+              <LanguageToggle tone="light" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={copyLink}
+                className="rounded-full text-white hover:bg-white/15 hover:text-white"
+              >
+                <Share2 className="size-4" />
+                <span className="hidden sm:inline">{isPreview ? t('Share preview') : t('Share')}</span>
+              </Button>
+              <Button asChild size="sm" variant="secondary" className="rounded-full bg-white/90 text-foreground hover:bg-white">
+                <Link to={isPreview ? claimPath : createPath}>{isPreview ? t('Claim this profile') : t('Create your link')}</Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       <div className="relative h-[300px] sm:h-[400px]">
         <img src={cover} alt={t('{name} portfolio cover', { name: profile.fullName })} className="size-full object-cover object-[center_30%]" />
@@ -165,7 +273,11 @@ export default function PublicProfile() {
             alt={profile.fullName}
             className="size-24 shrink-0 rounded-full border-4 border-background object-cover shadow-xl sm:size-32"
           />
-          {profile.isDemo && (
+          {isPreview ? (
+            <span className="mb-1 rounded-full border border-primary/20 bg-accent px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-primary">
+              {t('Preview profile')}
+            </span>
+          ) : profile.isDemo && (
             <span className="mb-1 rounded-full border border-border bg-card px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
               {t('Sample profile')}
             </span>
@@ -187,8 +299,8 @@ export default function PublicProfile() {
               <p className="font-display text-xl text-primary">{lowestPrice ? inr(lowestPrice) : t('On request')}</p>
             </div>
             <Button asChild size="lg" className="h-12 rounded-full px-6 shadow-lg shadow-primary/20">
-              <Link to={`/p/${profile.username}/request`}>
-                {t('Request a Booking')}
+              <Link to={isPreview ? claimPath : requestPath(profile.username)}>
+                {isPreview ? t('Claim this profile') : t('Request a Booking')}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
@@ -198,11 +310,15 @@ export default function PublicProfile() {
 
       <main className="page-shell">
         <section className="mt-10 grid gap-3 sm:grid-cols-3">
-          {[
+          {(isPreview ? [
+            { icon: Zap, label: t('Preview only — not claimed yet') },
+            { icon: Sparkles, label: t('Free to claim in one click') },
+            { icon: Check, label: t('Every detail is editable') },
+          ] : [
             { icon: Check, label: t('No account needed') },
             { icon: Clock3, label: t('Takes about 3 minutes') },
             { icon: CalendarDays, label: t('Reply on WhatsApp within 24 hrs') },
-          ].map((item) => (
+          ]).map((item) => (
             <div key={item.label} className="flex items-center gap-2.5 rounded-2xl border border-border/70 bg-card px-4 py-3 text-[12px] font-semibold text-foreground/80">
               <span className="flex size-7 items-center justify-center rounded-full bg-accent text-primary"><item.icon className="size-3.5" /></span>
               {item.label}
@@ -291,10 +407,10 @@ export default function PublicProfile() {
                   <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{service.description}</p>
                 </div>
                 <Link
-                  to={`/p/${profile.username}/request?service=${encodeURIComponent(service.name)}`}
+                  to={isPreview ? claimPath : `${requestPath(profile.username)}?service=${encodeURIComponent(service.name)}`}
                   className="mt-4 inline-flex w-fit items-center gap-1 text-[11px] font-bold text-primary link-underline"
                 >
-                  {t('Request this service')} <ArrowRight className="size-3.5" />
+                  {isPreview ? t('Claim this profile') : t('Request this service')} <ArrowRight className="size-3.5" />
                 </Link>
               </div>
             ))}
@@ -345,15 +461,21 @@ export default function PublicProfile() {
         <section className="mt-16 overflow-hidden rounded-[1.8rem] bg-[linear-gradient(120deg,hsl(350_42%_94%),hsl(38_48%_90%))] p-7 sm:p-10">
           <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
             <div>
-              <p className="eyebrow">{t('Your date, her calendar')}</p>
+              <p className="eyebrow">{isPreview ? t('This page can be yours') : t('Your date, her calendar')}</p>
               <h2 className="mt-2 max-w-md text-3xl leading-tight sm:text-4xl">
-                {t('Tell {name} about your day.', { name: profile.fullName.split(' ')[0] })}
+                {isPreview
+                  ? t('Make this page yours.')
+                  : t('Tell {name} about your day.', { name: profile.fullName.split(' ')[0] })}
               </h2>
-              <p className="mt-2 text-sm text-muted-foreground">{t('Seven quick screens. No account. She replies on WhatsApp.')}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {isPreview
+                  ? t('Claim @{username} and turn this preview into your live profile — free, in one click.', { username: slug })
+                  : t('Seven quick screens. No account. She replies on WhatsApp.')}
+              </p>
             </div>
             <Button asChild size="lg" className="h-12 shrink-0 rounded-full px-6">
-              <Link to={`/p/${profile.username}/request`}>
-                {t('Request a Booking')} <ArrowRight className="size-4" />
+              <Link to={isPreview ? claimPath : requestPath(profile.username)}>
+                {isPreview ? t('Claim this profile') : t('Request a Booking')} <ArrowRight className="size-4" />
               </Link>
             </Button>
           </div>
@@ -367,12 +489,16 @@ export default function PublicProfile() {
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/70 bg-background/95 p-3 backdrop-blur sm:hidden">
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
-            <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t('Services from')}</p>
-            <p className="truncate font-display text-lg text-primary">{lowestPrice ? inr(lowestPrice) : t('On request')}</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+              {isPreview ? t('Preview profile') : t('Services from')}
+            </p>
+            <p className="truncate font-display text-lg text-primary">
+              {isPreview ? t('Free to claim') : lowestPrice ? inr(lowestPrice) : t('On request')}
+            </p>
           </div>
           <Button asChild className="h-11 flex-1 rounded-full text-sm">
-            <Link to={`/p/${profile.username}/request`}>
-              {t('Request a Booking')} <ArrowRight className="size-4" />
+            <Link to={isPreview ? claimPath : requestPath(profile.username)}>
+              {isPreview ? t('Claim this profile') : t('Request a Booking')} <ArrowRight className="size-4" />
             </Link>
           </Button>
         </div>
@@ -413,6 +539,7 @@ export default function PublicProfile() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </>
   )
 }

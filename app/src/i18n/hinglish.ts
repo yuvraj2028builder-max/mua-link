@@ -267,6 +267,7 @@ export const hinglish: Record<string, string> = {
   'HD': 'HD',
   'Airbrush': 'Airbrush',
   'Hair': 'Hair',
+  'Kit': 'Kit',
 
   // Occasions & budgets
   'Pre-Wedding Shoot': 'Pre-wedding shoot',
@@ -775,4 +776,77 @@ export const hinglish: Record<string, string> = {
     'Phir bhi doubt hai? Live profile kholkar dekhein bride ko kya dikhta hai.',
   'Give her a page worth stopping for. Set up your profile in ten minutes, share the link, and let the form do the asking.':
     'Use aisa page dein jahan woh ruk kar dekhe. Das minute mein profile set karein, link share karein, aur sawaal form ko karne dein.',
+
+  // Preview profile + 1-click claim
+  'Preview profile': 'Preview profile',
+  'View preview': 'Preview dekhein',
+  'Share preview': 'Preview share karein',
+  'Preview link copied': 'Preview link copy ho gaya',
+  'This is a preview page built for @{username}.': 'Ye ek preview page hai jo @{username} ke liye banaya gaya hai.',
+  'This is a preview page built for @{username} on MUALink.': 'Ye MUALink par @{username} ke liye banaya gaya preview page hai.',
+  'Claim the preview profile built for @{username} on MUALink. Free, and ready in one click.':
+    'MUALink par @{username} ke liye bana preview profile claim karein. Free, aur ek click mein ready.',
+  'Claim this profile': 'Ye profile claim karein',
+  'Claim this profile free (1-click)': 'Ye profile free claim karein (1-click)',
+  'Claim @{username}': '@{username} claim karein',
+  'Claim @{username} in one click.': 'Ek click mein @{username} claim karein.',
+  'Add your WhatsApp to claim @{username}.': 'Claim karne ke liye apna WhatsApp daalein — @{username}.',
+  'Your preview is ready': 'Aapka preview ready hai',
+  'This page is built for': 'Ye page bana hai',
+  'It already looks like your work. Claim it free, swap in your real photos and WhatsApp, and share one link that answers every bride’s first questions.':
+    'Ye pehle se aapke kaam jaisa lagta hai. Free mein claim karein, apni asli photos aur WhatsApp daalein, aur ek link share karein jo bride ke pehle sawaalon ka jawab de de.',
+  '{name} preview cover': '{name} ka preview cover',
+  'Preview only — not claimed yet': 'Sirf preview — abhi claim nahi hua',
+  'Free to claim in one click': 'Ek click mein free claim',
+  'Free to claim': 'Free claim karein',
+  'Every detail is editable': 'Har detail badli ja sakti hai',
+  'Sample photos': 'Sample photos',
+  'Editable in 2 minutes': '2 minute mein badlein',
+  'No card needed': 'Card ki zarurat nahi',
+  'This page can be yours': 'Ye page aapka ho sakta hai',
+  'Make this page yours.': 'Is page ko apna banayein.',
+  'Claim @{username} and turn this preview into your live profile — free, in one click.':
+    '@{username} claim karein aur is preview ko apni live profile banayein — free, ek click mein.',
+  'This link isn’t available.': 'Ye link available nahi hai.',
+  'The link may have changed, or it isn’t a profile link.': 'Link badal gaya ho sakta hai, ya ye profile link nahi hai.',
+  'Checking this link…': 'Ye link check kar rahe hain…',
+  'This profile is being set up.': 'Ye profile set ho raha hai.',
+  'The artist has claimed this link and is finishing her page. Check back soon.':
+    'Artist ne ye link claim kar liya hai aur apna page complete kar rahi hai. Thodi der baad dekhein.',
+  'This link can’t be claimed.': 'Ye link claim nahi ho sakta.',
+  'Use 3–30 lowercase letters, numbers or underscores.': '3–30 chhote letters, numbers ya underscore use karein.',
+  'Opening this claim…': 'Ye claim khol rahe hain…',
+  'Enter a valid 10-digit WhatsApp number.': 'Sahi 10-digit WhatsApp number daalein.',
+  'Your WhatsApp number': 'Aapka WhatsApp number',
+  'Claimed — add your photos and publish when ready.': 'Claim ho gaya — photos daalein aur ready hone par publish karein.',
+  'Could not claim this profile. Please try again.': 'Ye profile claim nahi ho paya. Dobara koshish karein.',
+  'This number is only for your studio. Brides never see it on your profile — they send their details through your booking form.':
+    'Ye number sirf aapke studio ke liye hai. Bride ise aapki profile par kabhi nahi dekhti — woh apni details booking form se bhejti hai.',
+  'Sign in with Google so the page is linked to you. We never post, message or share anything on your behalf.':
+    'Google se sign in karein taaki ye page aapke naam ho. Hum aapki taraf se kuch bhi post, message ya share nahi karte.',
+  'Accounts are not connected in this build. Your claim will be saved on this device only.':
+    'Is build mein accounts connect nahi hain. Aapka claim sirf is device par save hoga.',
+  'Your preview photos are placeholders. You’ll replace them before publishing — your page stays private until you choose to go live.':
+    'Aapke preview photos placeholder hain. Publish karne se pehle inhe badlein — jab tak aap live na karein, page private rehta hai.',
+  'Keep your own photos and prices': 'Apni photos aur prices rakhein',
+  'Your number stays off the public page': 'Aapka number public page par nahi dikhta',
+  'Free forever in V1 — no commission': 'V1 mein hamesha free — koi commission nahi',
+  'Already claimed this page?': 'Ye page pehle hi claim kar liya hai?',
+  'Sign in with the same Google account': 'Usi Google account se sign in karein',
+  'Free in V1 · No card': 'V1 mein free · Card nahi',
+  'This profile is already yours.': 'Ye profile pehle se aapki hai.',
+  'You’re signed in with the account that owns @{username}. Update your photos, services or link anytime from your studio.':
+    'Aap us account se sign in hain jiske paas @{username} hai. Apni photos, services ya link kabhi bhi studio se update karein.',
+  'You already have a profile.': 'Aapki ek profile pehle se hai.',
+  'One account runs one MUALink profile. Head to your studio to update your link, photos and services.':
+    'Ek account par ek hi MUALink profile chalti hai. Link, photos aur services update karne ke liye apne studio par jayein.',
+  'Open my dashboard': 'Mera dashboard kholein',
+  'View my public profile': 'Meri public profile dekhein',
+  'This link was just claimed.': 'Ye link abhi claim ho gaya.',
+  'Another artist has already taken @{username}. Head back to the preview to see who it belongs to, or explore MUALink for your own link.':
+    'Kisi doosri artist ne @{username} le liya hai. Preview par wapas jaakar dekhein ye kiska hai, ya apne link ke liye MUALink explore karein.',
+  'View this profile': 'Ye profile dekhein',
+  'Built for WhatsApp replies': 'WhatsApp replies ke liye bana',
+  'Private by default': 'Default se private',
+  'Made in India': 'Made in India',
 }

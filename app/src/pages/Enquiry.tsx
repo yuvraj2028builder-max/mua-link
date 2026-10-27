@@ -42,7 +42,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Progress } from '@/components/ui/progress'
 import { emptyEnquiry } from '../data'
 import type { EnquiryDraft } from '../types'
-import { budgets, formatEventDateLong, formatTime, formatVenue, isValidIndianMobile, occasions } from '../lib/site'
+import { budgets, formatEventDateLong, formatTime, formatVenue, isValidIndianMobile, occasions, profilePath } from '../lib/site'
 import { compressImage } from '../lib/image'
 
 const occasionIcons: Record<string, LucideIcon> = {
@@ -155,7 +155,7 @@ export default function Enquiry() {
         <p className="mt-3 max-w-sm text-sm text-muted-foreground">
           {t('{name} has paused bookings for now.', { name: artist.fullName })}
         </p>
-        <Button asChild className="mt-7 rounded-full"><Link to={`/p/${artist.username}`}>{t('Back to profile')}</Link></Button>
+        <Button asChild className="mt-7 rounded-full"><Link to={profilePath(artist.username)}>{t('Back to profile')}</Link></Button>
       </div>
     )
   }
@@ -292,7 +292,7 @@ export default function Enquiry() {
 
             <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
               <Button asChild variant="outline" className="h-11 flex-1 rounded-full">
-                <Link to={`/p/${artist.username}`}>{t('Back to profile')}</Link>
+                <Link to={profilePath(artist.username)}>{t('Back to profile')}</Link>
               </Button>
               <Button asChild className="h-11 flex-1 rounded-full">
                 <Link to="/">
@@ -317,7 +317,7 @@ export default function Enquiry() {
           <div className="flex items-center gap-3">
             <LanguageToggle />
             <Link
-              to={`/p/${artist.username}`}
+              to={profilePath(artist.username)}
               className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="size-3.5" /> {t('Back to {name}', { name: firstName })}

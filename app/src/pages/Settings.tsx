@@ -12,7 +12,7 @@ import UserMenu from '../components/UserMenu'
 import { FullPageLoader } from '../components/RequireAuth'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { initials, profileUrl } from '../lib/site'
+import { initials, profilePath, profileUrl } from '../lib/site'
 
 export default function Settings() {
   const { user, signOut, configured } = useAuth()
@@ -104,7 +104,7 @@ export default function Settings() {
             </Button>
             {profile?.published && (
               <Button asChild variant="outline" size="sm" className="h-9 rounded-full text-[11px]">
-                <Link to={`/p/${profile.username}`}>
+                <Link to={profilePath(profile.username)}>
                   <UserRound className="size-3.5" /> {t('View public profile')}
                 </Link>
               </Button>

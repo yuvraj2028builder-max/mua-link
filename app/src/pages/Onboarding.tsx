@@ -46,6 +46,7 @@ import {
   isValidIndianMobile,
   languages as languageOptions,
   portfolioTags,
+  profilePath,
   profileUrl,
   RESERVED_USERNAMES,
   slugify,
@@ -479,7 +480,7 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
                 </a>
               </Button>
               <Button asChild className="h-11 rounded-full text-[12px]">
-                <Link to={`/p/${form.username}`}>
+                <Link to={profilePath(form.username)}>
                   {t('View my profile')} <ArrowUpRight className="size-4" />
                 </Link>
               </Button>
@@ -516,7 +517,7 @@ function OnboardingForm({ baseProfile, isNew }: { baseProfile: MuaProfile; isNew
               {t('Save & exit')}
             </Button>
             <Button asChild variant="outline" size="sm" className="rounded-full text-[11px]">
-              <Link to={`/p/${form.username || baseProfile.username}`}>
+              <Link to={profilePath(form.username || baseProfile.username)}>
                 {t('Preview')} <ArrowUpRight className="size-3.5" />
               </Link>
             </Button>
