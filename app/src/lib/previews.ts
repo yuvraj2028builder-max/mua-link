@@ -132,6 +132,67 @@ export const SUPPLIED_PREVIEWS: Record<string, PreviewOverride> = {
     travelAvailable: true,
     languages: ['Hindi', 'English'],
   },
+  glossymakeoverworld: {
+    fullName: 'Rajni Soni',
+    city: 'Delhi NCR',
+    bio: 'Bridal, HD and glam makeup from Glossy Makeover Studio & Academy. Camera-ready bridal looks, polished party glam and a calm, unhurried morning. Available for bookings, collaborations and makeup courses.',
+    profilePhoto: '/images/artists/glossymakeoverworld-3.png',
+    services: [
+      { id: 's1', name: 'Signature Bridal', description: 'HD makeup, hairstyling, draping & lashes', priceType: 'starting_from', price: 25000, visible: true },
+      { id: 's2', name: 'Engagement & Reception', description: 'Polished glam with hair & draping', priceType: 'starting_from', price: 16000, visible: true },
+      { id: 's3', name: 'HD & Glam Party Makeup', description: 'Soft glam or bold makeup with lashes', priceType: 'fixed', price: 7000, visible: true },
+      { id: 's4', name: 'Family Makeup', description: 'Occasion makeup for family & friends', priceType: 'starting_from', price: 3500, visible: true },
+      { id: 's5', name: 'Makeup Course', description: 'Professional training at Glossy Makeover Academy', priceType: 'custom_quote', price: null, visible: true },
+    ],
+    portfolio: [
+      { id: 'p1', url: '/images/artists/glossymakeoverworld-1.png', tag: 'HD' },
+      { id: 'p2', url: '/images/artists/glossymakeoverworld-2.png', tag: 'Bridal' },
+      { id: 'p3', url: '/images/artists/glossymakeoverworld-3.png', tag: 'Bridal' },
+    ],
+    serviceCities: ['Delhi', 'Gurgaon', 'Noida', 'Faridabad'],
+    travelAvailable: true,
+    languages: ['Hindi', 'English'],
+  },
+  makeupartistryby_barkha_bm: {
+    fullName: 'Barkha',
+    city: 'Delhi',
+    bio: 'Certified makeup artist based in Delhi and working globally. Bridal, party and glam looks with soft, camera-ready skin. DM for bookings, collaborations and PR.',
+    profilePhoto: '/images/artists/makeupartistryby_barkha_bm-2.png',
+    services: [
+      { id: 's1', name: 'Signature Bridal', description: 'HD makeup, hairstyling, draping & lashes', priceType: 'starting_from', price: 30000, visible: true },
+      { id: 's2', name: 'Engagement & Reception', description: 'Polished glam with hair & draping', priceType: 'starting_from', price: 18000, visible: true },
+      { id: 's3', name: 'Party Makeup', description: 'Soft glam or bold makeup with lashes', priceType: 'fixed', price: 7000, visible: true },
+      { id: 's4', name: 'Family Makeup', description: 'Occasion makeup for family & friends', priceType: 'starting_from', price: 3500, visible: true },
+      { id: 's5', name: 'Destination & Global Bookings', description: 'Travel for weddings in India and abroad', priceType: 'custom_quote', price: null, visible: true },
+    ],
+    portfolio: [
+      { id: 'p1', url: '/images/artists/makeupartistryby_barkha_bm-1.png', tag: 'Engagement' },
+      { id: 'p2', url: '/images/artists/makeupartistryby_barkha_bm-2.png', tag: 'Party' },
+      { id: 'p3', url: '/images/artists/makeupartistryby_barkha_bm-3.png', tag: 'Reception' },
+    ],
+    serviceCities: ['Delhi', 'Gurgaon', 'Noida', 'Global'],
+    travelAvailable: true,
+    languages: ['Hindi', 'English'],
+  },
+  beautifiedbycharu: {
+    fullName: 'Charu',
+    city: 'Delhi NCR',
+    bio: 'Bridal, party, engagement and HD glam makeup. Because every face deserves to shine ✨ Available for bookings and collaborations.',
+    profilePhoto: '/images/artists/beautifiedbycharu-1.png',
+    services: [
+      { id: 's1', name: 'Brides Makeup', description: 'HD makeup, hairstyling, draping & lashes', priceType: 'starting_from', price: 25000, visible: true },
+      { id: 's2', name: 'Engagement & Reception', description: 'Polished glam with hair & draping', priceType: 'starting_from', price: 18000, visible: true },
+      { id: 's3', name: 'Party Glam Makeup', description: 'Soft glam or bold makeup with lashes', priceType: 'fixed', price: 5000, visible: true },
+    ],
+    portfolio: [
+      { id: 'p1', url: '/images/artists/beautifiedbycharu-1.png', tag: 'Bridal' },
+      { id: 'p2', url: '/images/artists/beautifiedbycharu-2.png', tag: 'Reception' },
+      { id: 'p3', url: '/images/artists/beautifiedbycharu-3.png', tag: 'Party' },
+    ],
+    serviceCities: ['Delhi', 'Gurgaon', 'Noida'],
+    travelAvailable: true,
+    languages: ['Hindi', 'English'],
+  },
 }
 
 const samplePortfolio: PortfolioItem[] = [
